@@ -1,0 +1,16 @@
+# Change baseurl before deploy
+baseurl = "https://129700.github.io/"
+locale  = "zh-cn"
+title   = "个人主页"
+
+# Theme i18n support
+defaultContentLanguage = "zh-cn"
+
+# Set hasCJKLanguage to true if DefaultContentLanguage is in [zh-cn ja ko]
+hasCJKLanguage = true
+
+# Disable disqus
+disqusShortname = ""
+
+[pagination]
+    pagerSize = 5
