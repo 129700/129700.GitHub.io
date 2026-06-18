@@ -1,10 +1,4 @@
 ---
-menu:
-    main:
-        name: Home
-        weight: 1
-        params:
-            icon: home
 ---
 
 ## 最新项目

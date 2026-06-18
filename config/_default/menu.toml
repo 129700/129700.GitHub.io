@@ -1,29 +1,41 @@
 # Configure main menu and social menu
 [[main]]
     identifier = "home"
-    name       = "Home"
+    name       = "首页"
     url        = "/"
+    weight     = 1
     [main.params]
         icon = "home"
 
 [[main]]
     identifier = "archives"
-    name       = "Archives"
-    url        = "/p/archives/"
+    name       = "归档"
+    url        = "/archives/"
+    weight     = 2
+    [main.params]
+        icon = "archives"
+
+[[main]]
+    identifier = "timeline"
+    name       = "时间线"
+    url        = "/timeline/"
+    weight     = 3
     [main.params]
         icon = "archives"
 
 [[main]]
     identifier = "search"
-    name       = "Search"
-    url        = "/p/search/"
+    name       = "搜索"
+    url        = "/search/"
+    weight     = 4
     [main.params]
         icon = "search"
 
 [[main]]
     identifier = "links"
-    name       = "Links"
-    url        = "/p/links/"
+    name       = "友链"
+    url        = "/links/"
+    weight     = 5
     [main.params]
         icon = "link"
 
@@ -31,6 +43,7 @@
     identifier = "dm-h3510"
     name       = "DM电机"
     url        = "/dm-h3510-can-id-guide/dm-h3510-can-id-guide.html"
+    weight     = 6
     [main.params]
         icon = "link"
 
@@ -38,6 +51,7 @@
     identifier = "github"
     name       = "GitHub"
     url        = "https://github.com/129700"
+    weight     = 1
 
     [social.params]
         icon = "brand-github"
@@ -46,6 +60,7 @@
     identifier = "twitter"
     name       = "Twitter"
     url        = "https://twitter.com"
+    weight     = 2
 
     [social.params]
         icon = "brand-twitter"

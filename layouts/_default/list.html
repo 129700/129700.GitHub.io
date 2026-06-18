@@ -1,0 +1,58 @@
+{{ define "main" }}
+    <header class="taxonomy-header">
+        {{ $image := partial "helper/image" (dict "Image" .Params.image "Resources" .Resources "Context" .) }}
+        <div class="taxonomy-card{{ if $image }} has-image{{ end }}">
+            {{ if $image }}
+            <div class="taxonomy-image">
+                {{ partial "helper/thumbnail-image" (dict
+                    "Resource" $image.Resource
+                    "Width" 120
+                    "Height" 120
+                    "Resize" .Site.Params.ImageProcessing.Thumbnail.Enabled
+                    "Attributes" (dict
+                        "src" $image.Permalink
+                        "alt" .Title
+                        "loading" "lazy"
+                        "width" $image.Width
+                        "height" $image.Height
+                    )
+                ) }}
+            </div>
+            {{ end }}
+            <div class="taxonomy-info">
+                <div class="taxonomy-badge">
+                    {{ if eq .Kind "taxonomy" }}
+                        {{ if in .RelPermalink "/tags/" }}标签{{ else }}分类{{ end }}
+                    {{ else }}
+                        {{ .Parent.Title }}
+                    {{ end }}
+                </div>
+                <h1 class="taxonomy-title">{{ .Title }}</h1>
+                <div class="taxonomy-stats">
+                    <span class="taxonomy-count">{{ len .Pages }} 篇文章</span>
+                    {{ with .Params.description }}
+                    <span class="taxonomy-desc-sep">·</span>
+                    <span class="taxonomy-description">{{ . }}</span>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {{ $pages := .Pages }}
+    {{ $paginator := .Paginate $pages }}
+
+    <section class="article-list article-list--taxonomy">
+        {{ range $paginator.Pages }}
+            {{ partial "article-list/default-card" . }}
+        {{ end }}
+    </section>
+
+    {{ partial "pagination.html" . }}
+
+    {{ partialCached "footer/footer" . }}
+{{ end }}
+
+{{ define "right-sidebar" }}
+    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+{{ end }}

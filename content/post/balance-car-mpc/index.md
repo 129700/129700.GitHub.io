@@ -2,6 +2,7 @@
 title: "平衡车理论（三）：MPC 模型预测控制"
 slug: balance-car-mpc
 description: "掌握模型预测控制（MPC）的核心原理：预测模型、滚动优化、反馈校正，以及在平衡车上的应用实现。"
+image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1200&h=675&fit=crop"
 categories:
     - 项目
     - 学习

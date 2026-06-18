@@ -2,6 +2,7 @@
 title: "平衡车理论（二）：LQR 线性二次型调节器"
 slug: balance-car-lqr
 description: "从状态空间模型到 LQR 控制器设计，推导 Riccati 方程，实现平衡车的最优状态反馈控制。"
+image: "https://images.unsplash.com/photo-1509228468518-180dd4864903?w=1200&h=675&fit=crop"
 categories:
     - 项目
     - 学习

@@ -1,34 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>博客 on 个人主页</title><link>https://129700.github.io/tags/%E5%8D%9A%E5%AE%A2/</link><description>Recent content in 博客 on 个人主页</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 18 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/tags/%E5%8D%9A%E5%AE%A2/index.xml" rel="self" type="application/rss+xml"/><item><title>欢迎来到我的博客</title><link>https://129700.github.io/p/welcome/</link><pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate><guid>https://129700.github.io/p/welcome/</guid><description>&lt;h2 id="关于这个博客"&gt;关于这个博客
-&lt;/h2&gt;&lt;p&gt;这是我的个人主页，使用 &lt;a class="link" href="https://gohugo.io/" target="_blank" rel="noopener"
- &gt;Hugo&lt;/a&gt; + &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener"
- &gt;Stack&lt;/a&gt; 主题搭建。&lt;/p&gt;
-&lt;p&gt;在这里，我会记录：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;技术学习笔记&lt;/strong&gt;：编程、嵌入式、算法等&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;项目记录&lt;/strong&gt;：从零到一搭建项目的完整过程&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;读书笔记&lt;/strong&gt;：阅读心得与思考&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="博客功能"&gt;博客功能
-&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;左侧导航栏：Home / Archives / Search / Links&lt;/li&gt;
-&lt;li&gt;支持分类和标签&lt;/li&gt;
-&lt;li&gt;全文搜索&lt;/li&gt;
-&lt;li&gt;暗色模式切换&lt;/li&gt;
-&lt;li&gt;文章目录（TOC）&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="开始写作"&gt;开始写作
-&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 创建新文章&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo new content post/文章名称/index.md
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
- &lt;blockquote&gt;
- &lt;p&gt;学如逆水行舟，不进则退。&lt;/p&gt;
-
- &lt;/blockquote&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>博客 on 个人主页</title>
+        <link>https://129700.github.io/tags/%E5%8D%9A%E5%AE%A2/</link>
+        <description>Recent content in 博客 on 个人主页</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Thu, 18 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/tags/%E5%8D%9A%E5%AE%A2/index.xml" rel="self" type="application/rss+xml" /><item>
+            <title>欢迎来到我的博客</title>
+            <link>https://129700.github.io/p/welcome/</link>
+            <pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate>
+            <guid>https://129700.github.io/p/welcome/</guid>
+            <description>&lt;img src=&#34;https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&amp;h=675&amp;fit=crop&#34; alt=&#34;Featured image of post 欢迎来到我的博客&#34; /&gt;&lt;h2 id=&#34;关于这个博客&#34;&gt;关于这个博客&#xA;&lt;/h2&gt;&lt;p&gt;这是我的个人主页，使用 &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;&#xA;    &gt;Hugo&lt;/a&gt; + &lt;a class=&#34;link&#34; href=&#34;https://github.com/CaiJimmy/hugo-theme-stack&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;&#xA;    &gt;Stack&lt;/a&gt; 主题搭建。&lt;/p&gt;&#xA;&lt;p&gt;在这里，我会记录：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;技术学习笔记&lt;/strong&gt;：编程、嵌入式、算法等&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;项目记录&lt;/strong&gt;：从零到一搭建项目的完整过程&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;读书笔记&lt;/strong&gt;：阅读心得与思考&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;博客功能&#34;&gt;博客功能&#xA;&lt;/h2&gt;&lt;ul&gt;&#xA;&lt;li&gt;左侧导航栏：Home / Archives / Search / Links&lt;/li&gt;&#xA;&lt;li&gt;支持分类和标签&lt;/li&gt;&#xA;&lt;li&gt;全文搜索&lt;/li&gt;&#xA;&lt;li&gt;暗色模式切换&lt;/li&gt;&#xA;&lt;li&gt;文章目录（TOC）&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;开始写作&#34;&gt;开始写作&#xA;&lt;/h2&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;&#xA;&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1&#xA;&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2&#xA;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&#xA;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 创建新文章&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;hugo new content post/文章名称/index.md&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&#xA;&lt;/div&gt;&#xA;&lt;/div&gt;&#xA;    &lt;blockquote&gt;&#xA;        &lt;p&gt;学如逆水行舟，不进则退。&lt;/p&gt;&#xA;&#xA;    &lt;/blockquote&gt;&#xA;</description>
+        </item></channel>
+</rss>

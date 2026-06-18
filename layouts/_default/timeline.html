@@ -1,0 +1,78 @@
+{{ define "body-class" }}template-timeline{{ end }}
+{{ define "main" }}
+    <header class="article-header">
+        <h1 class="article-title">{{ .Title }}</h1>
+        {{ with .Params.description }}
+        <p class="article-subtitle">{{ . }}</p>
+        {{ end }}
+    </header>
+
+    {{ $pages := partial "helper/pages.html" .Site.Home }}
+    {{ $total := len $pages }}
+
+    <div class="timeline-stats">
+        <p>时间线共计 <strong>{{ $total }}</strong> 篇文章，按发布时间倒序排列。</p>
+    </div>
+
+    <div class="timeline-container">
+        <div class="timeline-line"></div>
+        {{ range $index, $page := $pages }}
+            {{ $charCount := len $page.Plain }}
+            {{ $readingSpeed := 450 }}
+            {{ $readingTime := div $charCount $readingSpeed }}
+            {{ if lt $readingTime 1 }}
+                {{ $readingTime = 1 }}
+            {{ end }}
+            {{ $image := partial "helper/image" (dict "Image" $page.Params.image "Resources" $page.Resources "Context" $page) }}
+            {{ $side := "right" }}
+            {{ if mod $index 2 }}
+                {{ $side = "left" }}
+            {{ end }}
+            <div class="timeline-item timeline-item--{{ $side }}">
+                <div class="timeline-dot"></div>
+                <article class="timeline-card{{ if $image }} has-image{{ end }}">
+                    <a href="{{ $page.RelPermalink }}" class="timeline-card-link">
+                        {{ if $image }}
+                        <div class="timeline-card-image">
+                            {{ partial "helper/thumbnail-image" (dict
+                                "Resource" $image.Resource
+                                "Width" 360
+                                "Height" 200
+                                "Resize" $page.Site.Params.ImageProcessing.Thumbnail.Enabled
+                                "Attributes" (dict
+                                    "src" $image.Permalink
+                                    "alt" $page.Title
+                                    "loading" "lazy"
+                                    "width" $image.Width
+                                    "height" $image.Height
+                                )
+                            ) }}
+                        </div>
+                        {{ end }}
+                        <div class="timeline-card-content">
+                            <div class="timeline-card-date">
+                                {{ partial "helper/icon" "date" }}
+                                <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "2006年01月02日" }}</time>
+                            </div>
+                            <h3 class="timeline-card-title">{{ $page.Title }}</h3>
+                            {{ with $page.Params.description }}
+                            <p class="timeline-card-summary">{{ . }}</p>
+                            {{ else }}
+                            {{ $summary := $page.Plain | truncate 80 }}
+                            {{ if ne $summary "" }}
+                            <p class="timeline-card-summary">{{ $summary }}</p>
+                            {{ end }}
+                            {{ end }}
+                            <div class="timeline-card-meta">
+                                {{ partial "helper/icon" "clock" }}
+                                <span>约 {{ $readingTime }} 分钟阅读</span>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        {{ end }}
+    </div>
+
+    {{ partialCached "footer/footer" . }}
+{{ end }}

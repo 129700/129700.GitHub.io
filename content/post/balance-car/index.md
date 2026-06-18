@@ -2,6 +2,7 @@
 title: "平衡车理论项目：从建模到控制"
 slug: balance-car-project
 description: "两轮自平衡小车理论学习项目总览，涵盖系统建模、PID、MPC、LQR 三种控制算法的原理与对比。"
+image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=675&fit=crop"
 categories:
     - 项目
     - 学习

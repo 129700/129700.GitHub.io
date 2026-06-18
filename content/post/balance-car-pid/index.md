@@ -2,6 +2,7 @@
 title: "平衡车理论（一）：PID 控制"
 slug: balance-car-pid
 description: "深入理解 PID 控制原理，以及如何在两轮自平衡车上实现直立环、速度环、转向环三环串级 PID 控制。"
+image: "https://images.unsplash.com/photo-1635070041078-e363336697db?w=1200&h=675&fit=crop"
 categories:
     - 项目
     - 学习

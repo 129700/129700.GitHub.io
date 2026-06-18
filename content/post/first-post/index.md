@@ -2,6 +2,7 @@
 title: 欢迎来到我的博客
 slug: welcome
 description: 这是我的第一篇博客文章，记录我的学习与成长。
+image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=675&fit=crop"
 categories:
     - 教程
 tags:
