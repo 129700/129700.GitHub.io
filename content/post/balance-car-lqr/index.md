@@ -11,7 +11,7 @@ tags:
     - 控制理论
     - 现代控制
     - Riccati方程
-date: 2026-06-19
+date: 2026-06-18
 math: true
 ---
 

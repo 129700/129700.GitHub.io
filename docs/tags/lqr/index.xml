@@ -1,4 +1,268 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LQR on 个人主页</title><link>https://129700.github.io/tags/lqr/</link><description>Recent content in LQR on 个人主页</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 18 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/tags/lqr/index.xml" rel="self" type="application/rss+xml"/><item><title>平衡车理论项目：从建模到控制</title><link>https://129700.github.io/p/balance-car-project/</link><pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate><guid>https://129700.github.io/p/balance-car-project/</guid><description>&lt;h2 id="项目概述"&gt;项目概述
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LQR on 个人主页</title><link>https://129700.github.io/tags/lqr/</link><description>Recent content in LQR on 个人主页</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 18 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/tags/lqr/index.xml" rel="self" type="application/rss+xml"/><item><title>平衡车理论（二）：LQR 线性二次型调节器</title><link>https://129700.github.io/p/balance-car-lqr/</link><pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate><guid>https://129700.github.io/p/balance-car-lqr/</guid><description>&lt;h2 id="从-pid-到-lqr"&gt;从 PID 到 LQR
+&lt;/h2&gt;&lt;p&gt;PID 是单输入单输出（SISO）控制，一次只处理一个变量。但平衡车是一个&lt;strong&gt;多变量系统&lt;/strong&gt;：我们需要同时关注倾角、角速度、位置、速度等多个状态。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;LQR（Linear Quadratic Regulator，线性二次型调节器）&lt;/strong&gt; 是现代控制理论的核心算法，它提供了一种&lt;strong&gt;系统化的方法&lt;/strong&gt;来设计多变量状态反馈控制器。&lt;/p&gt;
+&lt;h2 id="系统建模--状态空间方程"&gt;系统建模 — 状态空间方程
+&lt;/h2&gt;&lt;h3 id="平衡车的物理模型"&gt;平衡车的物理模型
+&lt;/h3&gt;&lt;p&gt;将平衡车简化为一个&lt;strong&gt;移动倒立摆&lt;/strong&gt;模型：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$m_b$：车身质量&lt;/li&gt;
+&lt;li&gt;$m_w$：轮子质量&lt;/li&gt;
+&lt;li&gt;$l$：车身质心到轮轴的距离&lt;/li&gt;
+&lt;li&gt;$I_b$：车身绕质心的转动惯量&lt;/li&gt;
+&lt;li&gt;$R$：轮子半径&lt;/li&gt;
+&lt;li&gt;$\theta$：车身倾角（偏离竖直方向）&lt;/li&gt;
+&lt;li&gt;$x$：小车水平位移&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在平衡点（$\theta \approx 0$）附近线性化，得到状态空间方程：&lt;/p&gt;
+$$
+\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}
+$$$$
+\mathbf{y} = C\mathbf{x} + D\mathbf{u}
+$$&lt;h3 id="状态向量定义"&gt;状态向量定义
+&lt;/h3&gt;$$
+\mathbf{x} = \begin{bmatrix} \theta &amp; \dot{\theta} &amp; x &amp; \dot{x} \end{bmatrix}^T
+$$&lt;p&gt;四个状态分别表示：&lt;strong&gt;倾角、角速度、位移、线速度&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="矩阵推导简化版"&gt;矩阵推导（简化版）
+&lt;/h3&gt;&lt;p&gt;经过牛顿力学推导并线性化后：&lt;/p&gt;
+$$
+A = \begin{bmatrix}
+0 &amp; 1 &amp; 0 &amp; 0 \\
+a_{21} &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+a_{41} &amp; 0 &amp; 0 &amp; 0
+\end{bmatrix}, \quad
+B = \begin{bmatrix} 0 \\ b_2 \\ 0 \\ b_4 \end{bmatrix}
+$$&lt;p&gt;其中 $a_{21}, a_{41}, b_2, b_4$ 由质量和几何参数决定。&lt;/p&gt;
+&lt;h2 id="lqr-原理"&gt;LQR 原理
+&lt;/h2&gt;&lt;h3 id="核心思想"&gt;核心思想
+&lt;/h3&gt;&lt;p&gt;LQR 的目标是找到状态反馈增益矩阵 $K$，使得以下二次型代价函数最小：&lt;/p&gt;
+$$
+J = \int_0^\infty \left( \mathbf{x}^T Q \mathbf{x} + \mathbf{u}^T R \mathbf{u} \right) dt
+$$&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$Q$&lt;/strong&gt;：状态权重矩阵（半正定），$Q$ 越大 → 对状态偏差的惩罚越重 → 响应越快&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$R$&lt;/strong&gt;：控制权重矩阵（正定），$R$ 越大 → 对控制量的惩罚越重 → 控制越平滑&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="控制律"&gt;控制律
+&lt;/h3&gt;$$
+\mathbf{u} = -K\mathbf{x}
+$$&lt;p&gt;其中 $K$ 由以下公式计算：&lt;/p&gt;
+$$
+K = R^{-1} B^T P
+$$&lt;p&gt;$P$ 满足&lt;strong&gt;代数 Riccati 方程（ARE）&lt;/strong&gt;：&lt;/p&gt;
+$$
+A^T P + P A - P B R^{-1} B^T P + Q = 0
+$$&lt;h3 id="直观理解"&gt;直观理解
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ┌─────────────────────────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ LQR 控制器 │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 状态 x ──→ K = [k1, k2, k3, k4] ──→ u │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ u = -(k1·θ + k2·θ̇ + k3·x + k4·ẋ) │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └─────────────────────────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;LQR 自动计算每个状态的最佳反馈权重，不需要像 PID 那样手动调三个参数。&lt;/p&gt;
+&lt;h2 id="q-和-r-矩阵的选取"&gt;Q 和 R 矩阵的选取
+&lt;/h2&gt;&lt;h3 id="经验法则"&gt;经验法则
+&lt;/h3&gt;&lt;p&gt;对于平衡车，典型的 $Q$ 和 $R$ 选择：&lt;/p&gt;
+$$
+Q = \begin{bmatrix}
+q_1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; q_2 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; q_3 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; q_4
+\end{bmatrix}, \quad R = [r]
+$$&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;参数&lt;/th&gt;
+					&lt;th&gt;含义&lt;/th&gt;
+					&lt;th&gt;增大效果&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$q_1$&lt;/td&gt;
+					&lt;td&gt;倾角权重&lt;/td&gt;
+					&lt;td&gt;车身更垂直，恢复更快&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$q_2$&lt;/td&gt;
+					&lt;td&gt;角速度权重&lt;/td&gt;
+					&lt;td&gt;抑制角速度波动&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$q_3$&lt;/td&gt;
+					&lt;td&gt;位移权重&lt;/td&gt;
+					&lt;td&gt;位置偏差惩罚更大&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$q_4$&lt;/td&gt;
+					&lt;td&gt;速度权重&lt;/td&gt;
+					&lt;td&gt;速度控制更精确&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$r$&lt;/td&gt;
+					&lt;td&gt;控制量惩罚&lt;/td&gt;
+					&lt;td&gt;输出更平滑，但响应变慢&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="调参策略"&gt;调参策略
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;先固定 $R = 1$，只调整 $Q$&lt;/li&gt;
+&lt;li&gt;增大 $q_1$ 让平衡更&amp;quot;硬&amp;quot;，减小 $q_1$ 让平衡更&amp;quot;软&amp;quot;&lt;/li&gt;
+&lt;li&gt;如果电机 PWM 输出过大，增大 $R$ 来限制控制量&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="matlab-实现"&gt;MATLAB 实现
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-matlab" data-lang="matlab"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;% 系统参数&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;m_b&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c"&gt;% 车身质量 (kg)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;m_w&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.05&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c"&gt;% 轮子质量 (kg)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c"&gt;% 质心高度 (m)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;g&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;9.81&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c"&gt;% 重力加速度&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;% 构建状态空间矩阵（简化模型）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="mf"&gt;15.0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;2.0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;8.0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="mf"&gt;4.0&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;% 权重矩阵&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Q&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;diag&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt; &lt;span class="c"&gt;% 倾角权重最大&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;R&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;% 求解 LQR&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;K&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lqr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;% 输出结果&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;disp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;LQR 增益矩阵 K:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;disp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;K&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="c-语言实现嵌入式"&gt;C 语言实现（嵌入式）
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-c" data-lang="c"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// LQR 增益矩阵（MATLAB 计算得到）
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define K1 10.0f &lt;/span&gt;&lt;span class="c1"&gt;// 倾角反馈
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define K2 1.5f &lt;/span&gt;&lt;span class="c1"&gt;// 角速度反馈
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define K3 3.16f &lt;/span&gt;&lt;span class="c1"&gt;// 位移反馈
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define K4 2.0f &lt;/span&gt;&lt;span class="c1"&gt;// 速度反馈
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="nf"&gt;lqr_control&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="n"&gt;theta_dot&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="n"&gt;pos&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="n"&gt;vel&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;K1&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;theta&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;K2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;theta_dot&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;K3&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;pos&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;K4&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;vel&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="pid-vs-lqr-对比"&gt;PID vs LQR 对比
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;维度&lt;/th&gt;
+					&lt;th&gt;PID&lt;/th&gt;
+					&lt;th&gt;LQR&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;输入&lt;/td&gt;
+					&lt;td&gt;单变量误差&lt;/td&gt;
+					&lt;td&gt;完整状态向量&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;设计方法&lt;/td&gt;
+					&lt;td&gt;手工试凑&lt;/td&gt;
+					&lt;td&gt;数学优化&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;耦合处理&lt;/td&gt;
+					&lt;td&gt;手动解耦&lt;/td&gt;
+					&lt;td&gt;自动处理&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;最优性&lt;/td&gt;
+					&lt;td&gt;无保证&lt;/td&gt;
+					&lt;td&gt;二次型最优&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;需要模型&lt;/td&gt;
+					&lt;td&gt;否&lt;/td&gt;
+					&lt;td&gt;是（线性化模型）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;调参难度&lt;/td&gt;
+					&lt;td&gt;直观但耗时&lt;/td&gt;
+					&lt;td&gt;系统化但需理解 Q/R&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="lqr-的局限性"&gt;LQR 的局限性
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;线性化误差&lt;/strong&gt;：平衡车是非线性系统，在平衡点附近线性化后，大角度偏差时 LQR 效果下降&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;无法处理约束&lt;/strong&gt;：不能限制 PWM 的最大最小值、倾角范围等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;无限时域&lt;/strong&gt;：LQR 假设控制持续到无限远，实际中可能不需要&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这些局限性正是 MPC 的优势所在 → 下一篇见。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;参考文献: 两轮自平衡小车的LQR控制设计 - CSDN博客&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item><item><title>平衡车理论项目：从建模到控制</title><link>https://129700.github.io/p/balance-car-project/</link><pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate><guid>https://129700.github.io/p/balance-car-project/</guid><description>&lt;h2 id="项目概述"&gt;项目概述
 &lt;/h2&gt;&lt;p&gt;本项目旨在系统学习两轮自平衡小车（Two-Wheeled Self-Balancing Robot）背后涉及的控制理论。平衡车是一个经典的&lt;strong&gt;欠驱动、非线性、不稳定&lt;/strong&gt;系统，是学习现代控制理论的绝佳实验平台。&lt;/p&gt;
 &lt;p&gt;本项目将从系统建模出发，逐步深入三种经典控制算法：&lt;/p&gt;
 &lt;table&gt;
