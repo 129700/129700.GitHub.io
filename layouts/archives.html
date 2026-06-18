@@ -1,0 +1,34 @@
+{{ define "body-class" }}template-archives{{ end }}
+{{ define "main" }}
+    {{ partial "article/components/header" . }}
+    <div class="article-content">
+        {{ .Content }}
+    </div>
+
+    {{ $pages := partial "helper/pages.html" .Site.Home }}
+    {{ $total := len $pages }}
+
+    <div class="archives-stats">
+        <p>共计 <strong>{{ $total }}</strong> 篇文章，涵盖 {{ len .Site.Taxonomies.categories }} 个分类、{{ len .Site.Taxonomies.tags }} 个标签。</p>
+    </div>
+
+    {{ range $pages.GroupByDate "2006" }}
+    {{ $year := .Key }}
+    <div class="archives-group" id="{{ $year }}">
+        <h2 class="archives-date section-title"><a href="{{ $.RelPermalink }}#{{ $year }}">{{ $year }}</a></h2>
+
+        {{ range .Pages.GroupByDate "January" }}
+        {{ $month := .Key }}
+        {{ $count := len .Pages }}
+        <h3 class="archives-month">{{ $month }} <span class="archives-count">({{ $count }})</span></h3>
+        <div class="article-list--compact">
+            {{ range .Pages }}
+                {{ partial "article-list/compact" . }}
+            {{ end }}
+        </div>
+        {{ end }}
+    </div>
+    {{ end }}
+
+    {{ partialCached "footer/footer" . }}
+{{ end }}

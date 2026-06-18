@@ -1,3 +1,37 @@
 /*
-    You can add your own custom styles here.
+    Custom styles for archives page
 */
+
+.archives-stats {
+    margin-bottom: 2rem;
+    padding: 1rem 1.2rem;
+    background: var(--card-background);
+    border-radius: var(--card-border-radius);
+    font-size: 1.5rem;
+    color: var(--card-text-color-secondary);
+
+    p {
+        margin: 0;
+    }
+}
+
+.archives-month {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.8rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid var(--accent-color);
+    color: var(--card-text-color-main);
+
+    .archives-count {
+        font-weight: 400;
+        font-size: 1.4rem;
+        color: var(--card-text-color-secondary);
+    }
+}
+
+.archives-group {
+    .archives-date {
+        margin-top: 2rem;
+    }
+}
