@@ -27,6 +27,13 @@
     [main.params]
         icon = "link"
 
+[[main]]
+    identifier = "dm-h3510"
+    name       = "DM电机"
+    url        = "/dm-h3510-can-id-guide/dm-h3510-can-id-guide.html"
+    [main.params]
+        icon = "link"
+
 [[social]]
     identifier = "github"
     name       = "GitHub"
