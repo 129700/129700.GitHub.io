@@ -12,8 +12,8 @@ SortBy              = "default"
     customText = ""
 
 [dateFormat]
-    published   = ":date_full"
-    lastUpdated = ":date_full"
+    published   = "2006-01-02"
+    lastUpdated = "2006-01-02"
 
 [sidebar]
     emoji    = "🍥"

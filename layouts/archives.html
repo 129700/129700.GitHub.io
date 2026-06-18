@@ -22,10 +22,12 @@
     <div class="archives-group" id="{{ $year }}">
         <h2 class="archives-date section-title"><a href="{{ $.RelPermalink }}#{{ $year }}">{{ $year }}</a></h2>
 
-        {{ range .Pages.GroupByDate "January" }}
-        {{ $month := .Key }}
+        {{ range .Pages.GroupByDate "01" }}
+        {{ $monthNum := .Key }}
+        {{ $monthMap := dict "01" "一月" "02" "二月" "03" "三月" "04" "四月" "05" "五月" "06" "六月" "07" "七月" "08" "八月" "09" "九月" "10" "十月" "11" "十一月" "12" "十二月" }}
+        {{ $monthName := index $monthMap $monthNum }}
         {{ $count := len .Pages }}
-        <h3 class="archives-month">{{ $month }} <span class="archives-count">({{ $count }})</span></h3>
+        <h3 class="archives-month">{{ $monthName }} <span class="archives-count">({{ $count }})</span></h3>
         <div class="article-list--compact">
             {{ range .Pages }}
                 {{ partial "article-list/compact" . }}
