@@ -42,7 +42,7 @@
 [[main]]
     identifier = "dm-h3510"
     name       = "DM电机"
-    url        = "/dm-h3510-can-id-guide/dm-h3510-can-id-guide.html"
+    url        = "/dm-motor.html"
     weight     = 6
     [main.params]
         icon = "link"

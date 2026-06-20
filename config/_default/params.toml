@@ -16,8 +16,8 @@ SortBy              = "default"
     lastUpdated = "2006-01-02"
 
 [sidebar]
-    emoji    = "🍥"
-    subtitle = "不要假装努力，结果不会陪你演戏"
+    emoji    = "🤖"
+    subtitle = "控制理论 · 嵌入式"
     avatar   = "img/avatar.png"
 
 [article]

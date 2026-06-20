@@ -402,3 +402,739 @@
         }
     }
 }
+
+/*
+    =========================================
+    全站主题定制：覆盖 Stack 主题默认变量
+    =========================================
+*/
+
+/* —— 1. 配色：蓝紫强调色 + 柔和背景 —— */
+:root {
+    --body-background: #f7f8fc;
+    --accent-color: #667eea;
+    --accent-color-darker: #5568d3;
+    --accent-color-text: #fff;
+
+    --card-border-radius: 12px;
+}
+
+[data-scheme="dark"] {
+    --body-background: #1a1b26;
+    --card-background: #24283b;
+    --accent-color: #7aa2f7;
+    --accent-color-darker: #5e7acc;
+    --accent-color-text: #fff;
+
+    --card-text-color-main: rgba(255, 255, 255, 0.92);
+    --card-text-color-secondary: rgba(255, 255, 255, 0.65);
+    --card-text-color-tertiary: rgba(255, 255, 255, 0.45);
+    --card-separator-color: rgba(255, 255, 255, 0.1);
+    --card-background-selected: rgba(125, 162, 247, 0.12);
+}
+
+/* —— 2. 字体：优先中文优化字体 —— */
+:root {
+    --sys-font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
+        -apple-system, BlinkMacSystemFont, "Segoe UI", "Droid Sans", "Helvetica Neue";
+    --base-font-family: var(--sys-font-family), sans-serif;
+    --code-font-family: "JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas,
+        "Courier New", monospace;
+    --article-font-family: var(--base-font-family);
+}
+
+/* —— 3. 卡片阴影：更柔和、更轻 —— */
+:root {
+    --shadow-l1: 0 1px 3px rgba(20, 30, 60, 0.06), 0 1px 2px rgba(20, 30, 60, 0.04);
+    --shadow-l2: 0 6px 20px rgba(20, 30, 60, 0.08), 0 2px 6px rgba(20, 30, 60, 0.05);
+}
+
+/*
+    ============================================
+    方案 B：首页 · 现代简洁版（白底浅灰）
+    ============================================
+*/
+
+/* ——— 首页专属：左右侧栏滚动时向两侧滑走，内容区扩展 ——— */
+body.is-home main.main {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    transition: padding 0.4s ease, max-width 0.4s ease;
+}
+
+body.is-home .main-container {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+body.is-home .left-sidebar {
+    transition: transform 0.4s ease, opacity 0.4s ease, max-width 0.4s ease, margin 0.4s ease;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+body.is-home .right-sidebar {
+    transition: transform 0.4s ease, opacity 0.4s ease, max-width 0.4s ease, margin 0.4s ease;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+body.is-home-scrolled .left-sidebar {
+    transform: translateX(-100%);
+    opacity: 0;
+    max-width: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+body.is-home-scrolled .right-sidebar {
+    transform: translateX(100%);
+    opacity: 0;
+    max-width: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+body.is-home .right-sidebar {
+    max-width: 12% !important;
+}
+
+@media (min-width: 1024px) {
+    body.is-home .container.main-container {
+        max-width: 97vw;
+    }
+}
+
+@media (min-width: 1280px) {
+    body.is-home .container.main-container {
+        max-width: 97vw;
+    }
+    body.is-home .right-sidebar {
+        max-width: 10% !important;
+    }
+}
+
+/* ——— 顶部：头像 + 站名 + 导航（固定在顶部，滚动渐隐头像） ——— */
+.b-top {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 4px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e4e7eb;
+    box-shadow: 0 1px 4px rgba(20, 30, 60, 0.04);
+    transition: padding 0.3s ease, box-shadow 0.3s ease;
+}
+
+.b-top.is-scrolled {
+    padding: 10px 4px;
+    box-shadow: 0 2px 12px rgba(20, 30, 60, 0.08);
+}
+
+.b-top__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.b-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(20, 30, 60, 0.12);
+    transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+}
+
+.b-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.b-avatar span {
+    font-size: 24px;
+    color: #fff;
+}
+
+.b-top.is-scrolled .b-avatar {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    margin-right: -14px;
+}
+
+.b-top__meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+
+.b-top__name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1f2328;
+    letter-spacing: 0.3px;
+}
+
+.b-top__sub {
+    font-size: 12px;
+    color: #8c95a0;
+    font-weight: 400;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    max-height: 20px;
+    opacity: 1;
+}
+
+.b-top.is-scrolled .b-top__sub {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.b-nav {
+    display: flex;
+    gap: 22px;
+    font-size: 14px;
+}
+
+.b-nav a {
+    color: #586069;
+    text-decoration: none;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.b-nav a:hover {
+    color: #1f2328;
+}
+
+.b-nav a.active {
+    color: #1f2328;
+    border-bottom-color: #c05621;
+    font-weight: 500;
+}
+
+/* ——— 简介 Banner：大标题 + 统计 ——— */
+.b-intro {
+    padding: 64px 4px 52px;
+    text-align: center;
+    border-bottom: 1px solid #e4e7eb;
+    background: #fff;
+}
+
+.b-intro__title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2328;
+    margin: 0 0 14px;
+    letter-spacing: 0.5px;
+}
+
+.b-intro__sub {
+    font-size: 15px;
+    color: #586069;
+    margin: 0 auto 28px;
+    max-width: 560px;
+    line-height: 1.7;
+}
+
+.b-intro__stats {
+    display: inline-flex;
+    gap: 24px;
+    padding: 10px 24px;
+    background: #fafbfc;
+    border: 1px solid #eaecef;
+    border-radius: 999px;
+    font-size: 13px;
+    color: #586069;
+}
+
+.b-intro__stats strong {
+    color: #1f2328;
+    font-weight: 600;
+}
+
+/* ——— 文章卡片网格（3 列） ——— */
+.b-articles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 4px 8px;
+}
+
+.b-article {
+    display: block;
+    border: 1px solid #e4e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+}
+
+.b-article:hover {
+    border-color: #c05621;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(20, 30, 60, 0.10);
+}
+
+.b-article__cover {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    background: linear-gradient(135deg, #f0f3f7 0%, #e4e9f0 100%);
+    border-bottom: 1px solid #e4e7eb;
+}
+
+.b-article__body {
+    padding: 18px 20px 20px;
+}
+
+.b-article__cat {
+    font-size: 11px;
+    color: #c05621;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.b-article__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2328;
+    margin: 0 0 10px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.b-article__excerpt {
+    font-size: 13px;
+    color: #586069;
+    line-height: 1.6;
+    margin: 0 0 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.b-article__meta {
+    font-size: 12px;
+    color: #8c95a0;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.b-article__sep {
+    color: #c8ced6;
+}
+
+/* ——— 紧凑卡片（更多文章区） ——— */
+.b-articles--list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 4px 8px;
+}
+
+.b-article--compact {
+    display: flex;
+    align-items: center;
+    padding: 16px 18px;
+    border: 1px solid #e4e7eb;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    overflow: visible;
+}
+
+.b-article--compact:hover {
+    border-left-color: #c05621;
+    background: #fafbfc;
+}
+
+.b-article--compact .b-article__body {
+    padding: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.b-article--compact .b-article__cat {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    width: 70px;
+}
+
+.b-article--compact .b-article__title {
+    font-size: 15px;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.b-article--compact .b-article__meta {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* ——— 分区标题 ——— */
+.b-section {
+    padding: 28px 4px 8px;
+}
+
+.b-section__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2328;
+    margin: 0 0 18px;
+    padding-left: 4px;
+}
+
+.b-section__more {
+    font-size: 13px;
+    color: #8c95a0;
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s ease;
+}
+
+.b-section__more:hover {
+    color: #c05621;
+}
+
+/* ——— 碎碎念区 ——— */
+.b-moments {
+    margin-top: 24px;
+    padding: 28px 4px 32px;
+    background: #fafbfc;
+    border-top: 1px solid #e4e7eb;
+}
+
+.b-moments__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2328;
+    margin: 0 0 14px;
+}
+
+.b-moments__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.b-moment {
+    font-size: 13px;
+    color: #586069;
+    line-height: 1.8;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #eaecef;
+    border-radius: 6px;
+}
+
+.b-moment__date {
+    font-size: 11px;
+    color: #8c95a0;
+    margin-right: 10px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ——— 学习天数计数器（简介 Banner 下方） ——— */
+.b-counter {
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 26px;
+    background: linear-gradient(135deg, rgba(192, 86, 33, 0.08) 0%, rgba(102, 126, 234, 0.08) 100%);
+    border: 1px solid rgba(192, 86, 33, 0.25);
+    border-radius: 999px;
+}
+
+.b-counter__label {
+    font-size: 13px;
+    color: #586069;
+}
+
+.b-counter__number {
+    font-size: 22px;
+    font-weight: 700;
+    color: #c05621;
+    font-variant-numeric: tabular-nums;
+    min-width: 2.5ch;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* ——— 滚动渐显（IntersectionObserver 触发） ——— */
+.reveal-item {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-item.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ——— 响应式：中等屏幕 3 列 → 2 列 ——— */
+@media (max-width: 1100px) {
+    .b-articles {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ——— 响应式：窄屏适配 ——— */
+@media (max-width: 768px) {
+    .b-top {
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px 16px;
+    }
+
+    .b-top.is-scrolled {
+        padding: 10px 16px;
+    }
+
+    .b-top__left {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .b-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .b-avatar span {
+        font-size: 20px;
+    }
+
+    .b-top__name {
+        font-size: 15px;
+    }
+
+    .b-top__sub {
+        font-size: 11px;
+    }
+
+    .b-nav {
+        gap: 16px;
+        font-size: 13px;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .b-top.is-scrolled .b-avatar {
+        margin-right: -10px;
+    }
+
+    .b-intro {
+        padding: 44px 16px 36px;
+    }
+
+    .b-intro__title {
+        font-size: 24px;
+    }
+
+    .b-intro__sub {
+        font-size: 14px;
+    }
+
+    .b-intro__stats {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 18px;
+    }
+
+    .b-articles {
+        grid-template-columns: 1fr;
+        padding: 0 16px 8px;
+    }
+
+    .b-article__cover {
+        height: 110px;
+        font-size: 36px;
+    }
+
+    .b-moments {
+        padding: 24px 16px;
+    }
+
+    .b-counter {
+        padding: 10px 18px;
+        gap: 8px;
+    }
+
+    .b-counter__number {
+        font-size: 18px;
+    }
+}
+
+/* ——— 深色模式适配 ——— */
+[data-scheme="dark"] {
+    .b-top {
+        background: rgba(31, 35, 40, 0.9);
+        border-bottom-color: #2d333b;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .b-top__name {
+        color: #e6e8eb;
+    }
+
+    .b-top__sub {
+        color: #8b949e;
+    }
+
+    .b-avatar {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .b-nav a {
+        color: #8b949e;
+    }
+
+    .b-nav a:hover,
+    .b-nav a.active {
+        color: #e6e8eb;
+    }
+
+    .b-intro {
+        background: #1f2328;
+        border-bottom-color: #2d333b;
+    }
+
+    .b-intro__title {
+        color: #e6e8eb;
+    }
+
+    .b-intro__sub {
+        color: #8b949e;
+    }
+
+    .b-intro__stats {
+        background: #2d333b;
+        border-color: #3a4149;
+        color: #8b949e;
+    }
+
+    .b-intro__stats strong {
+        color: #e6e8eb;
+    }
+
+    .b-section__title {
+        color: #e6e8eb;
+    }
+
+    .b-section__more {
+        color: #8b949e;
+    }
+
+    .b-section__more:hover {
+        color: #e68a5b;
+    }
+
+    .b-article {
+        background: #2d333b;
+        border-color: #3a4149;
+    }
+
+    .b-article:hover {
+        border-color: #e68a5b;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .b-article__title {
+        color: #e6e8eb;
+    }
+
+    .b-article__excerpt {
+        color: #8b949e;
+    }
+
+    .b-article__meta {
+        color: #6e7681;
+    }
+
+    .b-article--compact:hover {
+        background: #262c32;
+    }
+
+    .b-moments {
+        background: #1a1d21;
+        border-top-color: #2d333b;
+    }
+
+    .b-moments__title {
+        color: #e6e8eb;
+    }
+
+    .b-moment {
+        background: #262c32;
+        border-color: #3a4149;
+        color: #8b949e;
+    }
+
+    .b-moment__date {
+        color: #6e7681;
+    }
+
+    .b-counter {
+        background: linear-gradient(135deg, rgba(230, 138, 91, 0.15) 0%, rgba(122, 162, 247, 0.15) 100%);
+        border-color: rgba(230, 138, 91, 0.35);
+    }
+
+    .b-counter__label {
+        color: #8b949e;
+    }
+
+    .b-counter__number {
+        color: #e68a5b;
+    }
+
+    .b-article:hover {
+        border-color: #e68a5b;
+    }
+}

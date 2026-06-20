@@ -1,0 +1,217 @@
+{{ define "body-class" }}is-home{{ end }}
+{{ define "left-sidebar" }}{{ end }}
+
+{{ define "main" }}
+
+{{/* ——— 顶部：头像 + 站名 + 导航 ——— */}}
+<section class="b-top" id="b-top">
+    <div class="b-top__left">
+        <div class="b-avatar">
+            {{ $avatar := .Site.Params.sidebar.avatar }}
+            {{ if $avatar }}
+                <img src="{{ $avatar }}" alt="{{ .Site.Title }}" loading="lazy">
+            {{ else }}
+                <span>👤</span>
+            {{ end }}
+        </div>
+        <div class="b-top__meta">
+            <div class="b-top__name">{{ .Site.Title }}</div>
+            <div class="b-top__sub">{{ .Site.Params.sidebar.subtitle | default "笔记站" }}</div>
+        </div>
+    </div>
+    <nav class="b-nav">
+        <a href="/" class="active">首页</a>
+        <a href="/archives/">归档</a>
+        <a href="/categories/">分类</a>
+        <a href="/tags/">标签</a>
+        <a href="/timeline/">时间线</a>
+        <a href="/about/">关于</a>
+    </nav>
+</section>
+
+{{/* ——— 简介 Banner：大标题 + 描述 + 统计 + 学习天数计数器 ——— */}}
+<section class="b-intro reveal-item">
+    <h1 class="b-intro__title">记录一些学习，一些生活。</h1>
+    <p class="b-intro__sub">
+        控制理论、嵌入式开发相关的学习笔记。偶尔写点生活碎片，写给未来回头看的自己。
+    </p>
+    <div class="b-intro__stats">
+        <span>📝 <strong>{{ len .Site.RegularPages }}</strong> 篇文章</span>
+        <span>🏷️ <strong>{{ len .Site.Taxonomies.tags }}</strong> 个标签</span>
+    </div>
+    <div class="b-counter" data-start-date="2024-01-01">
+        <span class="b-counter__label">📅 持续学习</span>
+        <span class="b-counter__number" id="b-learning-days">0</span>
+        <span class="b-counter__label">天</span>
+    </div>
+</section>
+
+{{/* ——— 精选文章卡片网格（3 列，6 篇） ——— */}}
+<section class="b-section reveal-item">
+    <div class="b-section__title">
+        <span>📌 最新文章</span>
+        <a class="b-section__more" href="/archives/">查看全部 →</a>
+    </div>
+
+    <div class="b-articles">
+        {{ $articles := where .Site.RegularPages "Section" "!=" "page" }}
+        {{ $sorted := sort $articles "Date" "desc" }}
+        {{ range $idx, $page := first 6 $sorted }}
+        <a class="b-article b-article--{{ mod $idx 4 }} reveal-item" href="{{ $page.RelPermalink }}">
+            <div class="b-article__cover">
+                {{ with $page.Params.categories }}
+                    {{ range first 1 . }}
+                        {{ if eq . "控制理论" }}📐
+                        {{ else if eq . "嵌入式" }}🛠️
+                        {{ else if eq . "平衡车" }}🚗
+                        {{ else if eq . "RoboMaster" }}🤖
+                        {{ else if eq . "学习笔记" }}📚
+                        {{ else if eq . "项目实践" }}🧪
+                        {{ else }}📖
+                        {{ end }}
+                    {{ end }}
+                {{ else }}📖
+                {{ end }}
+            </div>
+            <div class="b-article__body">
+                <div class="b-article__cat">
+                    {{ with $page.Params.categories }}
+                        {{ range first 1 . }}{{ . }}{{ end }}
+                    {{ else }}笔记
+                    {{ end }}
+                </div>
+                <h2 class="b-article__title">{{ $page.Title }}</h2>
+                <p class="b-article__excerpt">{{ $page.Summary | plainify | truncate 60 }}</p>
+                <div class="b-article__meta">
+                    <span>{{ $page.Date.Format "2006-01-02" }}</span>
+                    <span class="b-article__sep">·</span>
+                    <span>{{ $page.WordCount }} 字</span>
+                </div>
+            </div>
+        </a>
+        {{ end }}
+    </div>
+</section>
+
+{{/* ——— 碎碎念区 ——— */}}
+<section class="b-moments reveal-item">
+    <h2 class="b-moments__title">📜 碎碎念</h2>
+    <div class="b-moments__list">
+        <div class="b-moment">
+            <span class="b-moment__date">2026-06-18</span>
+            最近在啃 LQR 的状态反馈推导，矩阵代数的工具链还是不熟。
+        </div>
+        <div class="b-moment">
+            <span class="b-moment__date">2026-06-10</span>
+            调 PID 调了一晚上 —— 虽然理论上知道 Ziegler-Nichols，但实际系统里噪声大到周期都数不清。
+        </div>
+        <div class="b-moment">
+            <span class="b-moment__date">2026-05-28</span>
+            发现一个很有启发的点：控制理论学再多，最后落地还是要会写嵌入式。
+        </div>
+        <div class="b-moment">
+            <span class="b-moment__date">2026-05-15</span>
+            RoboMaster 看了今年的比赛，机器人性能越来越卷，但策略层反而有新玩法。
+        </div>
+    </div>
+</section>
+
+{{/* ——— 更多文章（保留主题的分页系统，方便翻完 6 篇之后继续看） ——— */}}
+<section class="b-section reveal-item" style="margin-top: 24px;">
+    <div class="b-section__title">
+        <span>� 更早的文章</span>
+    </div>
+    {{- $paginator := partial "helper/paginator.html" . -}}
+    <section class="b-articles b-articles--list">
+        {{ range first 4 (after 6 $paginator.Pages) }}
+        <a class="b-article b-article--compact reveal-item" href="{{ .RelPermalink }}">
+            <div class="b-article__body">
+                <div class="b-article__cat">
+                    {{ with .Params.categories }}{{ range first 1 . }}{{ . }}{{ end }}{{ else }}笔记{{ end }}
+                </div>
+                <h2 class="b-article__title">{{ .Title }}</h2>
+                <div class="b-article__meta">
+                    <span>{{ .Date.Format "2006-01-02" }}</span>
+                    <span class="b-article__sep">·</span>
+                    <span>{{ .WordCount }} 字</span>
+                </div>
+            </div>
+        </a>
+        {{ end }}
+    </section>
+    {{- partial "pagination.html" . -}}
+</section>
+
+{{- partial "footer/footer" . -}}
+
+{{/* ——— 首页动画：滚动渐显 + 数字递增计数器 ——— */}}
+<script>
+(function() {
+    // ===== 1. 数字递增：持续学习天数 =====
+    var counterEl = document.getElementById('b-learning-days');
+    if (counterEl) {
+        var startStr = counterEl.parentElement.getAttribute('data-start-date') || '2024-01-01';
+        var startParts = startStr.split('-');
+        var start = new Date(parseInt(startParts[0], 10), parseInt(startParts[1], 10) - 1, parseInt(startParts[2], 10));
+        var target = Math.max(1, Math.floor((new Date() - start) / 86400000));
+        var duration = 1200;
+        var t0 = performance.now();
+        function step(t) {
+            var progress = Math.min((t - t0) / duration, 1);
+            // easeOutCubic：让数字在末尾慢下来
+            var eased = 1 - Math.pow(1 - progress, 3);
+            counterEl.textContent = Math.floor(target * eased);
+            if (progress < 1) requestAnimationFrame(step);
+            else counterEl.textContent = target;
+        }
+        requestAnimationFrame(step);
+    }
+
+    // ===== 2. 滚动渐显：进入视口后淡入 + 上移 =====
+    if ('IntersectionObserver' in window) {
+        var items = document.querySelectorAll('.reveal-item');
+        var io = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry, idx) {
+                if (entry.isIntersecting) {
+                    // 错开一点点，让相邻卡片不是同时出现
+                    setTimeout(function() {
+                        entry.target.classList.add('is-visible');
+                    }, Math.min(idx * 40, 280));
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        items.forEach(function(el) { io.observe(el); });
+    } else {
+        // 老浏览器兜底：直接显示
+        document.querySelectorAll('.reveal-item').forEach(function(el) {
+            el.classList.add('is-visible');
+        });
+    }
+    // ===== 3. 顶部 b-top：滚动时头像渐隐 + 缩窄，右侧栏渐隐 =====
+    var bTop = document.getElementById('b-top');
+    if (bTop) {
+        var ticking = false;
+        function onScroll() {
+            var scrolled = window.scrollY > 80;
+            if (scrolled) {
+                bTop.classList.add('is-scrolled');
+                document.body.classList.add('is-home-scrolled');
+            } else {
+                bTop.classList.remove('is-scrolled');
+                document.body.classList.remove('is-home-scrolled');
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+        }, { passive: true });
+        onScroll(); // 初始执行一次
+    }
+})();
+</script>
+{{ end }}
+
+{{ define "right-sidebar" }}
+    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+{{ end }}

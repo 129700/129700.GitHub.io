@@ -2,7 +2,7 @@
 baseurl = "https://129700.github.io/"
 publishDir = "docs"
 locale  = "zh-cn"
-title   = "个人主页"
+title   = "129700 的笔记站"
 
 # Theme i18n support
 defaultContentLanguage = "zh-cn"
