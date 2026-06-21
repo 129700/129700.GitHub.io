@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="惯导姿态解算项目 王洪玺 哈尔滨工程大学创梦之翼战队，wanghongxi2001@foxmail.com ## 硬件平台说明 本项目硬件平台为RoboMaster C型开发板，Toolchain包含MDK5与Makefile，可使用Ozone进行调试（std.jdebug）。\n">
+<title>惯导姿态解算项目</title>
+
+
+<link rel="canonical" href="https://129700.github.io/p/guanxun-zuotai/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.5842f16ef5c6cabdd0551c25300bc5b8ccac121d001e069211e22d7a9aca01c9.css"><meta property='og:title' content="惯导姿态解算项目">
+<meta property='og:description' content="惯导姿态解算项目 王洪玺 哈尔滨工程大学创梦之翼战队，wanghongxi2001@foxmail.com ## 硬件平台说明 本项目硬件平台为RoboMaster C型开发板，Toolchain包含MDK5与Makefile，可使用Ozone进行调试（std.jdebug）。\n">
+<meta property='og:url' content='https://129700.github.io/p/guanxun-zuotai/'>
+<meta property='og:site_name' content='129700 的笔记站'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='IMU' /><meta property='article:tag' content='姿态解算' /><meta property='article:tag' content='卡尔曼滤波' /><meta property='article:published_time' content='2026-06-21T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2026-06-21T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="惯导姿态解算项目">
+<meta name="twitter:description" content="惯导姿态解算项目 王洪玺 哈尔滨工程大学创梦之翼战队，wanghongxi2001@foxmail.com ## 硬件平台说明 本项目硬件平台为RoboMaster C型开发板，Toolchain包含MDK5与Makefile，可使用Ozone进行调试（std.jdebug）。\n">
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/img/avatar.png" 
+                        width="602"
+                        height="458"
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+                    <span class="emoji">🤖</span>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">129700 的笔记站</a></h1>
+            <h2 class="site-description">控制理论 · 嵌入式</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/129700'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/timeline/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>时间线</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/dm-motor.html' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>DM电机</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span></span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav class="toc-nav" id="TableOfContents">
+                
+  <ol>
+    <li><a href="#基于四元数扩展卡尔曼滤波的姿态更新算法">基于四元数扩展卡尔曼滤波的姿态更新算法</a>
+      <ol>
+        <li><a href="#四元数">四元数</a></li>
+        <li><a href="#状态向量">状态向量</a></li>
+        <li><a href="#过程模型">过程模型</a></li>
+        <li><a href="#量测模型">量测模型</a></li>
+        <li><a href="#卡方检验">卡方检验</a>
+          <ol>
+            <li><a href="#滤波器发散保护">滤波器发散保护</a></li>
+            <li><a href="#增益自适应">增益自适应</a></li>
+            <li><a href="#零偏修正限幅">零偏修正限幅</a></li>
+          </ol>
+        </li>
+        <li><a href="#渐消因子">渐消因子</a></li>
+        <li><a href="#算法更新流程">算法更新流程</a></li>
+        <li><a href="#试验验证">试验验证</a>
+          <ol>
+            <li><a href="#零偏估计">零偏估计</a></li>
+            <li><a href="#运动加速度影响抑制">运动加速度影响抑制</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/categories/%E7%AC%94%E8%AE%B0/" style="background-color: hsl(4, 60%, 84%); color: hsl(4, 60%, 15%);">
+                笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/guanxun-zuotai/">惯导姿态解算项目</a>
+        </h2>
+
+        
+    </div>
+
+    
+    
+    
+    
+    
+
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2026-06-21T00:00:00Z'>2026-06-21</time>
+                
+
+                
+                
+                
+                
+
+                
+                    <span class="article-meta-sep">·</span>
+                    <span class="article-meta-chars">10894 字</span>
+                    <span class="article-meta-sep">·</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        约 24 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+    <aside class="article-toc">
+        <details>
+            <summary>
+                <div class="article-toc-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    <span></span>
+                </div>
+            </summary>
+            <nav class="toc-nav">
+                
+  <ol>
+    <li><a href="#基于四元数扩展卡尔曼滤波的姿态更新算法">基于四元数扩展卡尔曼滤波的姿态更新算法</a>
+      <ol>
+        <li><a href="#四元数">四元数</a></li>
+        <li><a href="#状态向量">状态向量</a></li>
+        <li><a href="#过程模型">过程模型</a></li>
+        <li><a href="#量测模型">量测模型</a></li>
+        <li><a href="#卡方检验">卡方检验</a>
+          <ol>
+            <li><a href="#滤波器发散保护">滤波器发散保护</a></li>
+            <li><a href="#增益自适应">增益自适应</a></li>
+            <li><a href="#零偏修正限幅">零偏修正限幅</a></li>
+          </ol>
+        </li>
+        <li><a href="#渐消因子">渐消因子</a></li>
+        <li><a href="#算法更新流程">算法更新流程</a></li>
+        <li><a href="#试验验证">试验验证</a>
+          <ol>
+            <li><a href="#零偏估计">零偏估计</a></li>
+            <li><a href="#运动加速度影响抑制">运动加速度影响抑制</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </details>
+    </aside>
+    
+
+    <section class="article-content">
+    
+    
+    <h1 id="惯导姿态解算项目">惯导姿态解算项目
+</h1><center><div style='height:2mm;'></div><div style="font-family:楷体;font-size:12pt;">王洪玺</div></center>
+<center><span style="font-family:楷体;font-size:9pt">哈尔滨工程大学创梦之翼战队，</span><span style="font-family:Times New Roman;font-size:9pt">wanghongxi2001@foxmail.com<br/></span>
+## 硬件平台说明
+<p>　　本项目硬件平台为RoboMaster C型开发板，Toolchain包含MDK5与Makefile，可使用Ozone进行调试（std.jdebug）。</p>
+<h2 id="基于四元数扩展卡尔曼滤波的姿态更新算法">基于四元数扩展卡尔曼滤波的姿态更新算法
+</h2><p>　　本算法利用四元数描述载体姿态，通过扩展卡尔曼滤波（Extended Kalman Filter, EKF）融合IMU数据，即利用加速度计修正姿态并估计陀螺仪 $x,y$ 轴零偏。并借助卡方检验剔除运动加速度过大时的加速度计量测以降低运动加速度对滤波准确性的影响。最终在STM32F4中利用C语言实现。采用记忆渐消因子避免零偏估计方差过度收敛。</p>
+<h3 id="四元数">四元数
+</h3><p>　　四元数定义：
+</p>
+$$
+\mathbf q=q_{0}^{}+q_{1}^{} i+q_{2}^{} j+q_{3}^{} k \quad(q_{0}^{}, q_{1}^{}, q_{2}^{}, q_{3}^{} \in \mathbb{R})
+$$<p>
+　　向量形式表示：
+</p>
+$$
+\mathbf q=\left[\begin{array}{l}
+{q_{0}^{}} \\
+{q_{1}^{}} \\
+{q_{2}^{}} \\
+{q_{3}^{}}
+\end{array}\right]
+$$<p>
+　　坐标变换矩阵$\boldsymbol C_b^n$：
+</p>
+$$
+\boldsymbol C_{b}^{n}=\left[\begin{array}{lll}
+{1-2\left(q_{2}^{2}+q_{3}^{2}\right)} & {2\left(q_{1} q_{2}-q_{0} q_{3}\right)} & {2\left(q_{1} q_{3}+q_{0} q_{2}\right)} \\
+{2\left(q_{1} q_{2}+q_{0} q_{3}\right)} & {1-2\left(q_{1}^{2}+q_{3}^{2}\right)} & {2\left(q_{2} q_{3}-q_{0} q_{1}\right)} \\
+{2\left(q_{1} q_{3}-q_{0} q_{2}\right)} & {2\left(q_{2} q_{3}+q_{0} q_{1}\right)} & {1-2\left(q_{1}^{2}+q_{2}^{2}\right)}
+\end{array}\right]
+$$<p>
+　　四元数关于时间的微分方程为：
+</p>
+$$
+\dot{ \mathbf q} = \frac{1}{2}\boldsymbol \Omega\mathbf q
+$$<p>
+其中：
+</p>
+$$
+\boldsymbol \Omega=\left[\begin{array}{cccc}
+{0} & {-\omega_{x}} & {-\omega_{y}} & {-\omega_{z}} \\
+{\omega_{x}} & {0} & {\omega_{z}} & {-\omega_{y}} \\
+{\omega_{y}} & {-\omega_{z}} & {0} & {\omega_{x}} \\
+{\omega_{z}} & {\omega_{y}} & {-\omega_{x}} & {0}
+\end{array}\right]
+$$<p>
+其中 $\omega_x,\omega_y,\omega_z$ 为 $b$ 系相对 $n$ 系的角速度。</p>
+<h3 id="状态向量">状态向量
+</h3><p>　　定义状态向量为：
+</p>
+$$
+\boldsymbol x = \left[\begin{array}{c}
+\mathbf q \\
+\boldsymbol \omega^{bias} 
+\end{array}\right]
+$$<p>
+其中 $\mathbf q = [q_0,q_1,q_2,q_3]^T$ 为机体坐标系 ($b$ 系) 相对惯性坐标系 ($n$ 系) 的姿态四元数。考虑一般姿态下 $b$ 系 $z$ 轴通常指天，故难以通过重力加速度估计其零偏，故定义 $\boldsymbol \omega^{bias} =[\omega^{bias}_x,\omega^{bias}_y]^T$ 为陀螺仪 $x,y$ 轴零飘。</p>
+<h3 id="过程模型">过程模型
+</h3><p>　　根据陀螺仪误差模型，存在：
+</p>
+$$
+\boldsymbol \omega^{real} = \boldsymbol \omega^{measure} - \boldsymbol \omega^{bias}
+$$<p>
+则过程模型为：
+</p>
+$$
+\begin{aligned}
+\boldsymbol  x_{k+1} &= f(\boldsymbol  x_k) + \boldsymbol {w}_{k} \\
+&= \left[\begin{array}{c}
+\mathbf q_k +\frac{1}{2}\left(\boldsymbol \Omega_k - \boldsymbol \Omega_k^{bias} \right)\Delta t \mathbf q_k  \\
+\boldsymbol \omega^{bias} _k
+\end{array}\right] + \boldsymbol {w}_{k}
+\end{aligned}
+$$<p>
+其中白噪声 $\boldsymbol {w}<em>{k} \sim N\left(\boldsymbol 0</em>{6 \times 1}, \boldsymbol {Q}\right)$，$\boldsymbol \Omega_k^{bias}$ 为陀螺仪零飘组成的矩阵。对非线性函数 $f$ 求其雅可比矩阵得 $\boldsymbol F_k$：
+</p>
+$$
+\begin{aligned}
+\boldsymbol F_k &=\frac{\partial f({\boldsymbol {x}}_{k})}{\partial {\boldsymbol {x}}_{k}}\\
+&=\left[\begin{array}{cc}
+\boldsymbol I_{4} + {\frac{1}{2}\left(\boldsymbol \Omega_k - \boldsymbol \Omega_k^{bias} \right) \Delta t} & {\boldsymbol O_k}  \\
+{\boldsymbol 0_{2\times4}} & {\boldsymbol I_2}  
+\end{array}\right]
+\end{aligned}
+$$<p>其中矩阵 $\boldsymbol O_k$ 为：
+</p>
+$$
+\boldsymbol O_k = \begin{array}{c}
+\left[\begin{array}{cc}
+ \frac{q_{1|k} \Delta t }{2} & \frac{q_{2|k}\Delta t }{2} \\
+-\frac{q_{0|k} \Delta t}{2}  & \frac{q_{3|k}\Delta t }{2} \\
+ -\frac{q_{3|k} \Delta t}{2} & -\frac{q_{0|k}\Delta t }{2}  \\
+\frac{q_{2|k} \Delta t}{2} & -\frac{q_{1|k}\Delta t }{2}  
+\end{array}\right]
+\end{array}
+$$<h3 id="量测模型">量测模型
+</h3><p>　　根据 $\boldsymbol g=\boldsymbol C_{n}^{b}\left[\begin{array}{ccc}0&amp;0&amp;1\end{array}\right]^T$，在无运动加速度情况下有：
+</p>
+$$
+\begin{equation}
+    \left[\begin{array}{lll}
+            {2\left(q_{1} q_{3}-q_{0} q_{2}\right)} \\
+            {2\left(q_{2} q_{3}+q_{0} q_{1}\right)} \\
+            {1-2\left(q_{1}^{2}+q_{2}^{2}\right)}
+        \end{array}\right]=
+    \left[\begin{array}{c}
+            a_x \\
+            a_y \\
+            a_z
+        \end{array}\right]
+\end{equation}
+$$<p>
+其中 $[a_x\ a_y\ a_z]^T$ 为归一化后向量，量测模型为：
+</p>
+$$
+\begin{equation}
+\boldsymbol  z_{k} =  h(\boldsymbol x_k) + \boldsymbol {v}_{k},\quad \boldsymbol {v}_{k} \sim N\left(\boldsymbol 0_{3 \times 1}, \boldsymbol {R}_k\right)
+\end{equation}
+$$<p>
+其中非线性函数 $h(\boldsymbol x_k)$ 为：
+</p>
+$$
+h({\boldsymbol {x}}_{k}) =\left[\begin{array}{lll}
+            {2\left(q_{1|k} q_{3|k}-q_{0|k} q_{2|k}\right)} \\
+            {2\left(q_{2|k} q_{3|k}+q_{0|k} q_{1|k}\right)} \\
+            {1-2\left(q_{1|k}^{2}+q_{2|k}^{2}\right)}
+        \end{array}\right]
+$$<p>
+根据四元数单位性质 $q_0^2+q_1^2+q_2^2+q_3^2=1$ 有：
+</p>
+$$
+\begin{equation}
+        \begin{aligned}
+            {\boldsymbol {H}}_k & = \frac{\partial h({\boldsymbol {x}}_{k})}{\partial {\boldsymbol {x}}_{k}} \\
+                                  & =\left[\begin{array}{ccccc}
+                    {-2q_{2|k}} & {2q_{3|k}}  & {-2q_{0|k}} & {2q_{1|k}} & \boldsymbol 0_{1\times2}  \\
+                    {2q_{1|k}}  & {2q_{0|k}}  & {2q_{3|k}}  & {2q_{2|k}} & \boldsymbol 0_{1\times2}  \\
+                    {2q_{0|k}}  & {-2q_{1|k}} & {-2q_{2|k}} & {2q_{3|k}} & \boldsymbol 0_{1\times2} 
+                \end{array}\right]
+        \end{aligned}
+\end{equation}
+$$<p>
+另外，重力加速度向量垂直于惯性系，不能用于修正航向角，即状态 $q_3$ 不可观。为避免修正过程破坏航向角准确性，量测更新中修正值 $\boldsymbol K_k(\boldsymbol z_k - h(\hat{\boldsymbol {x}}^-_{k}))$ 不能用于修正状态变量 $q_3$，故定义修正量为：
+</p>
+$$
+\begin{equation}
+    \boldsymbol M\boldsymbol K_k(\boldsymbol z_k - h(\hat{\boldsymbol {x}}^-_{k}))
+\end{equation}
+$$<p>
+其中矩阵 $\boldsymbol M$ 为：
+</p>
+$$
+\boldsymbol M = \left[\begin{array}{cccccc}
+1&0&0&0&0&0\\
+0&1&0&0&0&0\\
+0&0&1&0&0&0\\
+0&0&0&0&0&0\\
+0&0&0&0&1&0\\
+0&0&0&0&0&1
+\end{array}\right]
+$$<p>另外，为避免状态 $q_3$ 估计方差严重发散，矩阵 $\boldsymbol M$ 作用于修正量而非作用于卡尔曼增益 $\boldsymbol K_k$。</p>
+<h3 id="卡方检验">卡方检验
+</h3><p>　　量测模型的无偏性仅在不存在运动加速度的情况下成立，运动加速度的存在会导致量测更新出现误差。现实中机器人无运动加速度的稳态情况极少出现，为减小跳跃、撞击等情况下过大的运动加速度影响估计精度甚至稳定性，本算法通过卡方检验对加速度计量测信息进行检验。</p>
+<p>　　定义残差：
+</p>
+$$
+\begin{equation}
+\boldsymbol e_k =\boldsymbol z_k-h(\boldsymbol {x}_{k}^-)
+\end{equation}
+$$<p>
+正常情况下，残差 $\boldsymbol e_k$ 符合期望为 $\boldsymbol 0$ 的正态分布，其方差为：
+</p>
+$$
+\begin{equation}
+\boldsymbol D_k = E[\boldsymbol e_k\boldsymbol e_k^T]=\boldsymbol H_k\boldsymbol P_{k}^-\boldsymbol H_k^T + \boldsymbol R_k
+\end{equation}
+$$<p>
+当突然产生较大运动加速度时，残差的值会显著大于一般情况，定义检测函数：
+</p>
+$$
+\begin{equation}
+r_k = \boldsymbol e_k^T\boldsymbol D_k^{-1}\boldsymbol e_k
+\end{equation}
+$$<p>
+若 $r_k$ 大于阈值，本次量测存在较大运动加速度，则跳过本次量测更新仅进行预测更新。</p>
+<h4 id="滤波器发散保护">滤波器发散保护
+</h4><p>　　若工作环境过于恶劣或卡方检验阈值设置过低会导致滤波器长时间不进行量测更新，进而导致协方差矩阵过大导致载体静止状态下残差仍无法通过卡方检验，这种情况需强制进行量测更新。</p>
+<p>　　针对上述问题，本算法通过加速度与角速度测量值大小判断机体是否处于静止状态，若机体处于静止状态且无法通过卡方检验超过50次则设置ConvergeFlag为0，意味滤波器发散，要求暂时跳过卡方检验强制进行量测更新，直到检测函数值小于一定阈值时ConvergeFlag置1，意味滤波器收敛。</p>
+<h4 id="增益自适应">增益自适应
+</h4><p>　　若检查函数值较大，但仍能通过卡方检验，可根据检测函数值与卡方检验阈值的大小关系确定一个小于1的比例，作用于卡尔曼增益，以实现估计器增益的自适应。</p>
+<h4 id="零偏修正限幅">零偏修正限幅
+</h4><p>　　为避免特殊情况下零偏估计协方差过大导致量测更新中零篇修正值过大产生突变，本算法对量测更新中零偏修正值进行限幅。</p>
+<h3 id="渐消因子">渐消因子
+</h3><p>　　考虑到陀螺仪零偏过程模型不完全精确，为避免随时间推移陀螺仪零偏估计协方差过度收敛，导致估计器对陀螺仪零偏无法适应由温度等因素引起的缓慢变化，进而无法得到无偏估计。为解决上述问题，可通过设置估计协方差矩阵对角线元素下限避免过度收敛，或通过渐消因子对协方差阵进行调整。</p>
+<p>　　本算法采用渐消因子避免协方差矩阵过度收敛，定义渐消因子 $\lambda $ 为常数。考虑到仅需对陀螺仪零偏估计进行记忆渐消，故渐消因子 $\lambda $ 并不作用于整个协方差矩阵，定义矩阵 $\boldsymbol \Lambda$：
+</p>
+$$
+\boldsymbol \Lambda = \left[\begin{array}{cccccc}
+1&0&0&0&0&0\\
+0&1&0&0&0&0\\
+0&0&1&0&0&0\\
+0&0&0&1&0&0\\
+0&0&0&0&\frac{1}{\lambda}&0\\
+0&0&0&0&0&\frac{1}{\lambda}
+\end{array}\right]
+$$<p>
+于先验估计协方差更新前作用于协方差矩阵：
+</p>
+$$
+\boldsymbol P^*_{k+1}=\boldsymbol \Lambda\boldsymbol P_{k}
+$$<h3 id="算法更新流程">算法更新流程
+</h3><p>　　算法更新流程如下图所示：</p>
+<img src="http://hongxiwong-pic.oss-cn-beijing.aliyuncs.com/img/EKF滤波过程.png" alt="EKF滤波过程" style="zoom: 66%;" />
+<h3 id="试验验证">试验验证
+</h3><h4 id="零偏估计">零偏估计
+</h4><p>　　静止状态下开机 $x,y$ 轴零偏估计结果收敛情况如图所示：</p>
+<img src="http://hongxiwong-pic.oss-cn-beijing.aliyuncs.com/img/image-20220106194352656.png" alt="image-20220106194352656" style="zoom:10%;" />
+<p>　　静止状态下对比无额外零偏补偿的Mahony算法对俯仰角与横滚角的估计情况如图所示：</p>
+<img src="http://hongxiwong-pic.oss-cn-beijing.aliyuncs.com/img/image-20220106194513394.png" alt="image-20220106194513394" style="zoom:10%;" />
+<p>其中两条红色曲线为本文算法估计结果，两条噪声较小绿色曲线为无额外零偏补偿的Mahony算法估计结果，蓝色与噪声较大绿色的绿色曲线为加速度计正交分解得到的俯仰角与横滚角。</p>
+<p>　　综上，陀螺仪零偏会使无零偏补偿的Mahony算法估计结果产生偏差，本文算法在静止状态下开机后可有效估计 $x,y$ 轴零偏并得到俯仰角与横滚角的无偏估计结果。</p>
+<h4 id="运动加速度影响抑制">运动加速度影响抑制
+</h4><p>　　由于笔者没有姿态参考设备，故通过手持IMU并频繁甩动的方式施加运动加速度，甩动一段时间后使IMU保持静止，观察甩动结束后姿态角收敛情况，若静止后姿态角缓慢变化并最终收敛至与静止瞬间不同的结果，那么收敛值与静止瞬间值的差可以一定程度反应静止前姿态估计误差。</p>
+<p>　　本文算法对比Mahony算法对俯仰角与横滚角的估计情况如图所示：</p>
+<img src="http://hongxiwong-pic.oss-cn-beijing.aliyuncs.com/img/image-20220106195531947.png" alt="image-20220106195531947" style="zoom:10%;" />
+<p>局部放大如图所示：</p>
+<img src="http://hongxiwong-pic.oss-cn-beijing.aliyuncs.com/img/image-20220106195555191.png" alt="image-20220106195555191" style="zoom:10%;" />
+<p>其中两条红色曲线为本文算法估计结果，两条噪声较小绿色曲线为无额外零偏补偿的Mahony算法估计结果，蓝色与噪声较大绿色的绿色曲线为加速度计正交分解得到的俯仰角与横滚角（经过一定低通滤波）。</p>
+<p>　　综上，得益于卡方检验，本算法对运动加速度对姿态估计的不良影响具有一定程度的抑制作用。</p>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/imu/">IMU</a>
+        
+            <a href="/tags/%E5%A7%BF%E6%80%81%E8%A7%A3%E7%AE%97/">姿态解算</a>
+        
+            <a href="/tags/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/">卡尔曼滤波</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright inline-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const elementsToRender = [".main-article", ".widget--toc"];
+
+        elementsToRender.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    ignoredClasses: ["gist"]
+                });
+            }
+        });
+    });
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title"></h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/lingpiao-jiaozhun/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">BMI088 陀螺仪零漂校准原理</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/imu-xuexi/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">IMU学习笔记</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/kalman-filter/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">卡尔曼滤波从零开始</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/cmake-gcc-g/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CMake, GCC, G&#43;&#43;</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/c-yuyan-jichu/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">C语言基础</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <script
+    src="https://giscus.app/client.js"
+    data-repo="129700/129700.github.io"
+    data-repo-id=""
+    data-category="Announcements"
+    data-category-id=""
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="zh-CN"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+    function setGiscusTheme(theme) {
+        let giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: theme,
+                        },
+                    },
+                },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", (e) => {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('light');
+            } else {
+                setGiscusTheme('dark_dimmed');
+            }
+        }
+    })();
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 129700 的笔记站
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.d00997a2f4a6ce525f496da0c3ae6ad392b0468b8a9024f23309fdfc75c67a35.js" defer></script>
+<div class="reading-progress" id="reading-progress"></div>
+
+<button class="back-to-top" id="back-to-top" title="回到顶部" aria-label="回到顶部">↑</button>
+
+<script>
+(function() {
+    var progressBar = document.getElementById('reading-progress');
+    if (progressBar) {
+        var ticking = false;
+        function updateProgress() {
+            var scrollTop = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+            progressBar.style.width = progress + '%';
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
+        }, { passive: true });
+    }
+
+    var backBtn = document.getElementById('back-to-top');
+    if (backBtn) {
+        var showTick = false;
+        function toggleBackBtn() {
+            if (window.scrollY > 400) backBtn.classList.add('is-visible');
+            else backBtn.classList.remove('is-visible');
+            showTick = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!showTick) { requestAnimationFrame(toggleBackBtn); showTick = true; }
+        }, { passive: true });
+
+        backBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+})();
+</script>
+
+
+    </body>
+</html>

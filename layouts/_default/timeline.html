@@ -28,7 +28,7 @@
             {{ if mod $index 2 }}
                 {{ $side = "left" }}
             {{ end }}
-            <div class="timeline-item timeline-item--{{ $side }}">
+            <div class="timeline-item timeline-item--{{ $side }} stagger-reveal">
                 <div class="timeline-dot"></div>
                 <article class="timeline-card{{ if $image }} has-image{{ end }}">
                     <a href="{{ $page.RelPermalink }}" class="timeline-card-link">

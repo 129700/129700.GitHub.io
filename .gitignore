@@ -1,0 +1,6 @@
+_inbox/
+resources/
+public/
+.hugo_build.lock
+sync-config.json
+publish.ps1

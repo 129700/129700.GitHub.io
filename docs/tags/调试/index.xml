@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>调试 on 129700 的笔记站</title>
+        <link>https://129700.github.io/tags/%E8%B0%83%E8%AF%95/</link>
+        <description>Recent content in 调试 on 129700 的笔记站</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Sun, 21 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/tags/%E8%B0%83%E8%AF%95/index.xml" rel="self" type="application/rss+xml" /><item>
+            <title>DeBug手册</title>
+            <link>https://129700.github.io/p/debug-shouce/</link>
+            <pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate>
+            <guid>https://129700.github.io/p/debug-shouce/</guid>
+            <description>&lt;h1 id=&#34;debug手册&#34;&gt;DeBug手册&#xA;&lt;/h1&gt;&lt;h2 id=&#34;can&#34;&gt;CAN&#xA;&lt;/h2&gt;&lt;h3 id=&#34;errocode524288statelisten&#34;&gt;ErroCode:524288,State:Listen&#xA;&lt;/h3&gt;&lt;p&gt;如图：&lt;/p&gt;&#xA;&lt;p&gt;&lt;img alt=&#34;image-20260611000306321&#34; loading=&#34;lazy&#34; sizes=&#34;(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px&#34; src=&#34;D:\\Robomaster\\LearnMd\\Picture\\image-20260611000306321.png&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;ErroCode:54288=0x100000, –&amp;gt;HAL_CAN_ERRO_NOT_STARTED&lt;/p&gt;&#xA;&lt;p&gt;可能是未调用HAL_CAN_START函数，也有可能是==重复调用Start==&lt;/p&gt;&#xA;</description>
+        </item></channel>
+</rss>

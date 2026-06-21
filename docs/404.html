@@ -12,11 +12,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
 
 
-<link rel="stylesheet" href="/scss/style.min.eeae010a8aca5755e90137b17c5d90f45768eb5f7f14f2e9beb27bd30890efec.css"><meta property='og:title' content="404 Page not found">
+<link rel="stylesheet" href="/scss/style.min.5842f16ef5c6cabdd0551c25300bc5b8ccac121d001e069211e22d7a9aca01c9.css"><meta property='og:title' content="404 Page not found">
 <meta property='og:description' content="控制理论 · 嵌入式">
 <meta property='og:url' content='https://129700.github.io/404.html'>
 <meta property='og:site_name' content='129700 的笔记站'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2026-06-18T00:00:00&#43;00:00 '/>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2026-06-21T00:00:00&#43;00:00 '/>
 <meta name="twitter:title" content="404 Page not found">
 <meta name="twitter:description" content="控制理论 · 嵌入式">
     <link rel="shortcut icon" href="/img/favicon.png" />
@@ -307,6 +307,45 @@
         </div>
         
 <script type="text/javascript" src="/ts/main.d00997a2f4a6ce525f496da0c3ae6ad392b0468b8a9024f23309fdfc75c67a35.js" defer></script>
+<div class="reading-progress" id="reading-progress"></div>
+
+<button class="back-to-top" id="back-to-top" title="回到顶部" aria-label="回到顶部">↑</button>
+
+<script>
+(function() {
+    var progressBar = document.getElementById('reading-progress');
+    if (progressBar) {
+        var ticking = false;
+        function updateProgress() {
+            var scrollTop = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+            progressBar.style.width = progress + '%';
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
+        }, { passive: true });
+    }
+
+    var backBtn = document.getElementById('back-to-top');
+    if (backBtn) {
+        var showTick = false;
+        function toggleBackBtn() {
+            if (window.scrollY > 400) backBtn.classList.add('is-visible');
+            else backBtn.classList.remove('is-visible');
+            showTick = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!showTick) { requestAnimationFrame(toggleBackBtn); showTick = true; }
+        }, { passive: true });
+
+        backBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+})();
+</script>
 
 
     </body>

@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="卡尔曼滤波从零开始 此部分学不明白，仅记笔记，正文[点这](# 卡尔曼滤波 (Kalman Filter) 基础)\n一、递归算法 核心公式 —-&gt; ==递归== $$ \\hat{x_k}=\\hat{x}_{k-1}+K_k(z_k-\\hat{x}_{k-1})\\\\ K_k : 卡尔曼增益 =\\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}} \\qquad z_k:k时刻测量值\\qquad \\hat{x}_k：估计值/最优估计\\\\ e_{est_{k-1}}:k-1时刻的估计误差 \\qquad e_{mea_{k}}:K时刻的下测量误差、\\\\ e_{est_{k-1}} \\gg e_{mea_{k}}\\text{(测量误差很小)}\\qquad K_k \\to 1 \\quad \\hat{x_k}=\\hat{x}_{k-1}+z_k-\\hat{x}_{k-1}=z_k\\text{相信测量值}\\\\ e_{est_{k-1}} \\ll e_{mea_{k}}(测量误差很大) \\qquad K_k \\to 0 \\quad \\hat{x_k}=\\hat{x}_{k-1}\\qquad相信估计值\\\\ $$应用一下 Step1: 计算 Kalman Gain $K_k=\\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}}$\n">
+<title>卡尔曼滤波从零开始</title>
+
+
+<link rel="canonical" href="https://129700.github.io/p/kalman-filter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.5842f16ef5c6cabdd0551c25300bc5b8ccac121d001e069211e22d7a9aca01c9.css"><meta property='og:title' content="卡尔曼滤波从零开始">
+<meta property='og:description' content="卡尔曼滤波从零开始 此部分学不明白，仅记笔记，正文[点这](# 卡尔曼滤波 (Kalman Filter) 基础)\n一、递归算法 核心公式 —-&gt; ==递归== $$ \\hat{x_k}=\\hat{x}_{k-1}+K_k(z_k-\\hat{x}_{k-1})\\\\ K_k : 卡尔曼增益 =\\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}} \\qquad z_k:k时刻测量值\\qquad \\hat{x}_k：估计值/最优估计\\\\ e_{est_{k-1}}:k-1时刻的估计误差 \\qquad e_{mea_{k}}:K时刻的下测量误差、\\\\ e_{est_{k-1}} \\gg e_{mea_{k}}\\text{(测量误差很小)}\\qquad K_k \\to 1 \\quad \\hat{x_k}=\\hat{x}_{k-1}+z_k-\\hat{x}_{k-1}=z_k\\text{相信测量值}\\\\ e_{est_{k-1}} \\ll e_{mea_{k}}(测量误差很大) \\qquad K_k \\to 0 \\quad \\hat{x_k}=\\hat{x}_{k-1}\\qquad相信估计值\\\\ $$应用一下 Step1: 计算 Kalman Gain $K_k=\\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}}$\n">
+<meta property='og:url' content='https://129700.github.io/p/kalman-filter/'>
+<meta property='og:site_name' content='129700 的笔记站'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='卡尔曼滤波' /><meta property='article:tag' content='控制理论' /><meta property='article:published_time' content='2026-06-21T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2026-06-21T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="卡尔曼滤波从零开始">
+<meta name="twitter:description" content="卡尔曼滤波从零开始 此部分学不明白，仅记笔记，正文[点这](# 卡尔曼滤波 (Kalman Filter) 基础)\n一、递归算法 核心公式 —-&gt; ==递归== $$ \\hat{x_k}=\\hat{x}_{k-1}+K_k(z_k-\\hat{x}_{k-1})\\\\ K_k : 卡尔曼增益 =\\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}} \\qquad z_k:k时刻测量值\\qquad \\hat{x}_k：估计值/最优估计\\\\ e_{est_{k-1}}:k-1时刻的估计误差 \\qquad e_{mea_{k}}:K时刻的下测量误差、\\\\ e_{est_{k-1}} \\gg e_{mea_{k}}\\text{(测量误差很小)}\\qquad K_k \\to 1 \\quad \\hat{x_k}=\\hat{x}_{k-1}+z_k-\\hat{x}_{k-1}=z_k\\text{相信测量值}\\\\ e_{est_{k-1}} \\ll e_{mea_{k}}(测量误差很大) \\qquad K_k \\to 0 \\quad \\hat{x_k}=\\hat{x}_{k-1}\\qquad相信估计值\\\\ $$应用一下 Step1: 计算 Kalman Gain $K_k=\\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}}$\n">
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/img/avatar.png" 
+                        width="602"
+                        height="458"
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+                    <span class="emoji">🤖</span>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">129700 的笔记站</a></h1>
+            <h2 class="site-description">控制理论 · 嵌入式</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/129700'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/timeline/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>时间线</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/dm-motor.html' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>DM电机</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span></span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav class="toc-nav" id="TableOfContents">
+                
+  <ol>
+    <li><a href="#一递归算法">一、递归算法</a>
+      <ol>
+        <li><a href="#应用一下">应用一下</a></li>
+      </ol>
+    </li>
+    <li><a href="#二数学基础">二、数学基础</a>
+      <ol>
+        <li><a href="#一数据融合data-fusion">一、数据融合(Data Fusion)</a></li>
+        <li><a href="#二协方差矩阵covariance-matrix">二、协方差矩阵(Covariance matrix)</a></li>
+        <li><a href="#三状态空间表达state-space-representation">三、状态空间表达(State Space Representation)</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#状态方程-motion-model">状态方程 (Motion Model)</a></li>
+        <li><a href="#观测方程-observation-model">观测方程 (Observation Model)</a></li>
+      </ol>
+    </li>
+    <li><a href="#2-噪声假设">2. 噪声假设</a></li>
+    <li><a href="#3-算法两大步骤">3. 算法两大步骤</a>
+      <ol>
+        <li><a href="#-预测步骤-prediction--现况">🔹 预测步骤 (Prediction / &ldquo;现况&rdquo;)</a></li>
+        <li><a href="#-校正步骤-update--校正">🔹 校正步骤 (Update / &ldquo;校正&rdquo;)</a></li>
+      </ol>
+    </li>
+    <li><a href="#4-公式卡片">4. 公式卡片</a></li>
+    <li><a href="#5-直观理解">5. 直观理解</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#一使用">一、使用</a></li>
+    <li><a href="#二公式">二、公式</a></li>
+    <li><a href="#预测-predict">预测 (Predict)</a></li>
+    <li><a href="#更新-update">更新 (Update)</a></li>
+  </ol>
+
+            </nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/categories/%E7%AC%94%E8%AE%B0/" style="background-color: hsl(4, 60%, 84%); color: hsl(4, 60%, 15%);">
+                笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/kalman-filter/">卡尔曼滤波从零开始</a>
+        </h2>
+
+        
+    </div>
+
+    
+    
+    
+    
+    
+
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2026-06-21T00:00:00Z'>2026-06-21</time>
+                
+
+                
+                
+                
+                
+
+                
+                    <span class="article-meta-sep">·</span>
+                    <span class="article-meta-chars">6308 字</span>
+                    <span class="article-meta-sep">·</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        约 14 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+    <aside class="article-toc">
+        <details>
+            <summary>
+                <div class="article-toc-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    <span></span>
+                </div>
+            </summary>
+            <nav class="toc-nav">
+                
+  <ol>
+    <li><a href="#一递归算法">一、递归算法</a>
+      <ol>
+        <li><a href="#应用一下">应用一下</a></li>
+      </ol>
+    </li>
+    <li><a href="#二数学基础">二、数学基础</a>
+      <ol>
+        <li><a href="#一数据融合data-fusion">一、数据融合(Data Fusion)</a></li>
+        <li><a href="#二协方差矩阵covariance-matrix">二、协方差矩阵(Covariance matrix)</a></li>
+        <li><a href="#三状态空间表达state-space-representation">三、状态空间表达(State Space Representation)</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#状态方程-motion-model">状态方程 (Motion Model)</a></li>
+        <li><a href="#观测方程-observation-model">观测方程 (Observation Model)</a></li>
+      </ol>
+    </li>
+    <li><a href="#2-噪声假设">2. 噪声假设</a></li>
+    <li><a href="#3-算法两大步骤">3. 算法两大步骤</a>
+      <ol>
+        <li><a href="#-预测步骤-prediction--现况">🔹 预测步骤 (Prediction / &ldquo;现况&rdquo;)</a></li>
+        <li><a href="#-校正步骤-update--校正">🔹 校正步骤 (Update / &ldquo;校正&rdquo;)</a></li>
+      </ol>
+    </li>
+    <li><a href="#4-公式卡片">4. 公式卡片</a></li>
+    <li><a href="#5-直观理解">5. 直观理解</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#一使用">一、使用</a></li>
+    <li><a href="#二公式">二、公式</a></li>
+    <li><a href="#预测-predict">预测 (Predict)</a></li>
+    <li><a href="#更新-update">更新 (Update)</a></li>
+  </ol>
+
+            </nav>
+        </details>
+    </aside>
+    
+
+    <section class="article-content">
+    
+    
+    <h1 id="卡尔曼滤波从零开始">卡尔曼滤波从零开始
+</h1>
+    <blockquote>
+        <p>此部分学不明白，仅记笔记，正文[点这](# 卡尔曼滤波 (Kalman Filter) 基础)</p>
+
+    </blockquote>
+<h2 id="一递归算法">一、递归算法
+</h2><p><strong>核心公式</strong> —-&gt; ==递归==
+</p>
+$$
+\hat{x_k}=\hat{x}_{k-1}+K_k(z_k-\hat{x}_{k-1})\\
+K_k : 卡尔曼增益  =\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}} \qquad z_k:k时刻测量值\qquad \hat{x}_k：估计值/最优估计\\
+e_{est_{k-1}}:k-1时刻的估计误差 \qquad e_{mea_{k}}:K时刻的下测量误差、\\
+e_{est_{k-1}} \gg e_{mea_{k}}\text{(测量误差很小)}\qquad K_k \to 1 \quad  \hat{x_k}=\hat{x}_{k-1}+z_k-\hat{x}_{k-1}=z_k\text{相信测量值}\\
+e_{est_{k-1}} \ll e_{mea_{k}}(测量误差很大) \qquad K_k \to 0 \quad  \hat{x_k}=\hat{x}_{k-1}\qquad相信估计值\\
+$$<h3 id="应用一下">应用一下
+</h3><p>Step1: 计算 Kalman Gain $K_k=\frac{e_{est_{k-1}}}{e_{est_{k-1}}+e_{mea_{k}}}$</p>
+<p>Step2:计算 :  $\hat{x_k}=\hat{x}<em>{k-1}+K_k(z_k-\hat{x}</em>{k-1})$</p>
+<p>Step3:更新：$e_{est_{k}=(1-K_k)e_{est_{k-1}}}$</p>
+<hr>
+<h2 id="二数学基础">二、数学基础
+</h2><h3 id="一数据融合data-fusion">一、数据融合(Data Fusion)
+</h3>$$
+z_1\;\;\sigma_1\\
+z_2\;\;\sigma_2\\
+\hat{z}=z_1+K_k(z_2-z_1)\quad K \in[0,1]\\
+\sigma_\hat{z}^2= var(z_1 +K(z_2-z_1))=(1-K_k)^2(\sigma _1 ^2)+K_k\sigma _2^2\\
+\frac {d\sigma_z^2}{dK_k}=0时，K_k =\frac{\sigma _1^2}{\sigma _1^2+\sigma _2^2} \\
+可解出\hat{z},将两个不太准的结果融合后得到相对准的结果\\
+$$<h3 id="二协方差矩阵covariance-matrix">二、协方差矩阵(Covariance matrix)
+</h3><p><strong>方差、协方差在一个矩阵中表现，体现变量间的联动关系</strong></p>
+<p>**协方差： **$\sigma _x\sigma _y=\frac{1}{n}((x_1-\bar x)(y_1-\bar y)+ \dots) 若&gt;0\to xy变化趋势一至(正相关)$
+</p>
+$$
+协方差矩阵P=\begin{bmatrix}
+\sigma _x^2 & \sigma_x\sigma_y & \sigma_x\sigma_z\\
+\sigma_y\sigma_x & \sigma _y^2 & \sigma_y\sigma_z\\
+\sigma _z\sigma_z & \sigma_z\sigma_y & \sigma_z^2\\
+\end{bmatrix}
+\quad Var()=方差\quad Cov()=协方差
+$$<p>$$
+a = \begin{bmatrix}
+x_1 &amp; y_1 &amp; z_1 \
+x_2 &amp; y_2 &amp; z_2 \
+x_3 &amp; y_3 &amp; z_3
+\end{bmatrix}</p>
+<ul>
+<li>\frac{1}{3}\begin{bmatrix}
+1 &amp; 1 &amp; 1 \
+1 &amp; 1 &amp; 1 \
+1 &amp; 1 &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+x_1 &amp; y_1 &amp; z_1 \
+x_2 &amp; y_2 &amp; z_2 \
+x_3 &amp; y_3 &amp; z_3
+\end{bmatrix}\
+\
+P = \frac{1}{3} a^T a
+$$</li>
+</ul>
+<h3 id="三状态空间表达state-space-representation">三、状态空间表达(State Space Representation)
+</h3><p>一个离散线性动态系统可以用两个方程描述：</p>
+<p><strong>系统微分方程</strong>
+<strong>$m \ddot{x} + B \dot{x} + kx = F$</strong>
+其中 \( u = F \) 为控制输入。</p>
+<p><strong>定义状态变量</strong>
+$x_1 = x \quad (\text{位移}), \qquad x_2 = \dot{x} \quad (\text{速度})$</p>
+<p><strong>状态方程</strong>
+</p>
+$$
+\begin{cases}
+\dot{x}_1 = x_2 \\[4pt]
+\dot{x}_2 = \frac{1}{m} u - \frac{B}{m} x_2 - \frac{k}{m} x_1
+\end{cases}
+$$<p><strong>矩阵形式</strong></p>
+$$
+\begin{bmatrix}
+\dot{x}_1 \\
+\dot{x}_2
+\end{bmatrix}
+=\begin{bmatrix}
+0 & 1 \\
+-\frac{k}{m} & -\frac{B}{m}
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2
+\end{bmatrix}
++\begin{bmatrix}
+0 \\
+\frac{1}{m}
+\end{bmatrix}
+u
+$$<h1 id="endbmatrix"><strong>输出方程（测量）</strong>
+$$
+\begin{bmatrix}
+Z_1 \
+Z_2
+\end{bmatrix}
+</h1><p>\begin{bmatrix}
+1 &amp; 0 \
+0 &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \
+x_2
+\end{bmatrix}
+$$</p>
+<p><strong>即 ( Z = H x ) 且 \( $H = I_2$ \)（单位阵），测量值直接等于状态变量</strong>
+</p>
+$$
+离散化方程\\
+X_k=AX_{k-1}+BU_k+\omega_{k-1}\\
+Z_k=HX_k+V_k
+$$<hr>
+<h1 id="卡尔曼滤波-kalman-filter-基础">卡尔曼滤波 (Kalman Filter) 基础
+</h1><h3 id="状态方程-motion-model">状态方程 (Motion Model)
+</h3>$$
+X_k = A X_{k-1} + B u_{k-1} + W_{k-1}\\
+X_k：当前时刻的状态向量\\
+A：状态转移矩阵\\
+B:控制输入矩阵\\
+u_{k-1}：上一时刻的控制输入\\
+ W_{k-1}：过程噪声，服从正态分布 W \sim \mathcal{N}(0, Q)\\
+$$<h3 id="观测方程-observation-model">观测方程 (Observation Model)
+</h3>$$Z_k = H X_k + V_k$$<ul>
+<li>\($Z_k$\)：当前时刻的观测向量</li>
+<li>\(H\)：观测矩阵（将状态空间映射到观测空间）</li>
+<li>\($V_k$\)：观测噪声，服从正态分布 \($V \sim \mathcal{N}(0, R)$\)</li>
+</ul>
+<hr>
+<h2 id="2-噪声假设">2. 噪声假设
+</h2><ul>
+<li><strong>过程噪声</strong> \(W\)：$P(W) \sim \mathcal{N}(0, Q)$，\(Q\) 为过程噪声协方差矩阵。</li>
+<li><strong>观测噪声</strong> \(V\)：$P(V) \sim \mathcal{N}(0, R)$，\(R\) 为观测噪声协方差矩阵。</li>
+<li>两种噪声相互独立，且与状态无关。</li>
+</ul>
+<hr>
+<h2 id="3-算法两大步骤">3. 算法两大步骤
+</h2><p>卡尔曼滤波迭代分为 <strong>预测（先验）</strong> 和 <strong>校正（后验）</strong> 两步。</p>
+<h3 id="-预测步骤-prediction--现况">🔹 预测步骤 (Prediction / &ldquo;现况&rdquo;)
+</h3><p>利用上一时刻的最优估计和系统模型，得到当前时刻的先验估计。</p>
+<p><strong>先验状态估计：</strong></p>
+<p>$\hat{X}<em>k^- = A \hat{X}</em>{k-1}^+ + B u_{k-1}$</p>
+<ul>
+<li>上标 \(^-\) 表示先验（预测值）</li>
+<li>上标 \(^+\) 表示后验（校正后的最优估计）</li>
+</ul>
+<p><strong>先验误差协方差：</strong></p>
+<p>$P_k^- = A P_{k-1}^+ A^T + Q$</p>
+<ul>
+<li>这里的 \($P_{k-1}^+$) 是上一时刻后验协方差。原图中简写为 \($P_{k-1}$\)，意义相同。</li>
+</ul>
+<h3 id="-校正步骤-update--校正">🔹 校正步骤 (Update / &ldquo;校正&rdquo;)
+</h3><p>融合当前观测 \($Z_k$\)，修正先验估计得到后验估计。</p>
+<p><strong>卡尔曼增益：</strong></p>
+<p>$K_k = \frac{P_k^- H^T}{H P_k^- H^T + R}$</p>
+<ul>
+<li>\($K_k$\) 决定了更信任模型预测还是更信任实际观测。观测噪声 \(R\) 越大，增益越小。</li>
+</ul>
+<p><strong>后验状态估计（最优估计）：</strong></p>
+<p>$\hat{X}_k^+ = \hat{X}_k^- + K_k (Z_k - H \hat{X}_k^-)$</p>
+<ul>
+<li>括号内的项称为 <strong>新息 (Innovation)</strong>，即实际观测与预测观测之差。</li>
+</ul>
+<p><strong>后验误差协方差更新：</strong></p>
+$$P_k^+ = (I - K_k H) P_k^-$$<ul>
+<li>此式用于下一轮迭代</li>
+<li>左侧应为 <strong>后验协方差</strong> \($P_k^+$\)。</li>
+</ul>
+<hr>
+<h2 id="4-公式卡片">4. 公式卡片
+</h2><div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>步骤</th>
+					<th>公式</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>预测状态</td>
+					<td>$\hat{X}<em>k^- = A \hat{X}</em>{k-1}^+ + B u_{k-1}$</td>
+			</tr>
+			<tr>
+					<td>预测协方差</td>
+					<td>$P_k^- = A P_{k-1}^+ A^T + Q$</td>
+			</tr>
+			<tr>
+					<td>卡尔曼增益</td>
+					<td>$K_k = P_k^- H^T (H P_k^- H^T + R)^{-1}$</td>
+			</tr>
+			<tr>
+					<td>更新状态</td>
+					<td>$\hat{X}_k^+ = \hat{X}_k^- + K_k (Z_k - H \hat{X}_k^-$</td>
+			</tr>
+			<tr>
+					<td>更新协方差</td>
+					<td>$P_k^+ = (I - K_k H) P_k^-$</td>
+			</tr>
+	</tbody>
+</table></div>
+<hr>
+<h2 id="5-直观理解">5. 直观理解
+</h2><ol>
+<li><strong>预测</strong>：根据物理模型推测下一时刻状态，但不确定性增大$P_k^- $变大）。</li>
+<li><strong>观测</strong>：传感器给出实际读数，但有噪声。</li>
+<li><strong>校正</strong>：卡尔曼增益在两者之间取加权平均，得到后验估计，同时不确定性降低$P_k^+ &lt; P_k^-$。</li>
+</ol>
+<h1 id="卡尔曼滤波简单使用">卡尔曼滤波简单使用
+</h1><h2 id="一使用">一、使用
+</h2><p><strong>1.选择状态量、观测量</strong></p>
+<p><strong>2.构建方程</strong></p>
+<p><strong>3.初始化参数</strong></p>
+<p><strong>4.代入公式迭代</strong></p>
+<p><strong>5.调节超参数</strong></p>
+<h2 id="二公式">二、公式
+</h2><h2 id="预测-predict">预测 (Predict)
+</h2><p>$x̂ₜ⁻ = Fx̂ₜ₋₁ + Buₜ₋₁$</p>
+<p>$Pₜ⁻ = FPₜ₋₁Fᵀ + Q$</p>
+<h2 id="更新-update">更新 (Update)
+</h2><p>$Kₜ = Pₜ⁻Hᵀ(HPₜ⁻Hᵀ + R)⁻¹$</p>
+<p>$x̂ₜ = x̂ₜ⁻ + Kₜ(zₜ - Hx̂ₜ⁻)$</p>
+<p>$Pₜ = (I - KₜH)Pₜ⁻$</p>
+<div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>符号</th>
+					<th>含义</th>
+					<th>补充说明</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>X(k)</td>
+					<td>k 时刻系统状态</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>U(k)</td>
+					<td>k 时刻对系统控制量</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>A/F</td>
+					<td>状态转移矩阵</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>B</td>
+					<td>控制矩阵</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>Z(k)</td>
+					<td>k 时刻测量值</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>H</td>
+					<td>测量系统参数</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>W(k)</td>
+					<td>过程噪声</td>
+					<td>方差→Q</td>
+			</tr>
+			<tr>
+					<td>V(k)</td>
+					<td>测量噪声</td>
+					<td>方差→R</td>
+			</tr>
+	</tbody>
+</table></div>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/">卡尔曼滤波</a>
+        
+            <a href="/tags/%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/">控制理论</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright inline-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const elementsToRender = [".main-article", ".widget--toc"];
+
+        elementsToRender.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    ignoredClasses: ["gist"]
+                });
+            }
+        });
+    });
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title"></h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/guanxun-zuotai/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">惯导姿态解算项目</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/lingpiao-jiaozhun/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">BMI088 陀螺仪零漂校准原理</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/cmake-gcc-g/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CMake, GCC, G&#43;&#43;</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/c-yuyan-jichu/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">C语言基础</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/debug-shouce/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">DeBug手册</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <script
+    src="https://giscus.app/client.js"
+    data-repo="129700/129700.github.io"
+    data-repo-id=""
+    data-category="Announcements"
+    data-category-id=""
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="zh-CN"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+    function setGiscusTheme(theme) {
+        let giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: theme,
+                        },
+                    },
+                },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", (e) => {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('light');
+            } else {
+                setGiscusTheme('dark_dimmed');
+            }
+        }
+    })();
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 129700 的笔记站
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.d00997a2f4a6ce525f496da0c3ae6ad392b0468b8a9024f23309fdfc75c67a35.js" defer></script>
+<div class="reading-progress" id="reading-progress"></div>
+
+<button class="back-to-top" id="back-to-top" title="回到顶部" aria-label="回到顶部">↑</button>
+
+<script>
+(function() {
+    var progressBar = document.getElementById('reading-progress');
+    if (progressBar) {
+        var ticking = false;
+        function updateProgress() {
+            var scrollTop = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+            progressBar.style.width = progress + '%';
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
+        }, { passive: true });
+    }
+
+    var backBtn = document.getElementById('back-to-top');
+    if (backBtn) {
+        var showTick = false;
+        function toggleBackBtn() {
+            if (window.scrollY > 400) backBtn.classList.add('is-visible');
+            else backBtn.classList.remove('is-visible');
+            showTick = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!showTick) { requestAnimationFrame(toggleBackBtn); showTick = true; }
+        }, { passive: true });
+
+        backBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+})();
+</script>
+
+
+    </body>
+</html>

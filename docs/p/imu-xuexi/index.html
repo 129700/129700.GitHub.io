@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="IMU学习笔记 一、主要任务 1.读取BMI088的传感器数据\n2.滤波得出最优估计值\n3.姿态解算得出Yaw，Pitch，Roll\n二、具体实现 （1）BMI088读取 初始化 \u200b\t1.分别对陀螺仪和加速度计进行初始化流程（检测通信 -&gt;软件复位-&gt;检测通信-&gt;读取ID”Who I am”)\n">
+<title>IMU学习笔记</title>
+
+
+<link rel="canonical" href="https://129700.github.io/p/imu-xuexi/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.5842f16ef5c6cabdd0551c25300bc5b8ccac121d001e069211e22d7a9aca01c9.css"><meta property='og:title' content="IMU学习笔记">
+<meta property='og:description' content="IMU学习笔记 一、主要任务 1.读取BMI088的传感器数据\n2.滤波得出最优估计值\n3.姿态解算得出Yaw，Pitch，Roll\n二、具体实现 （1）BMI088读取 初始化 \u200b\t1.分别对陀螺仪和加速度计进行初始化流程（检测通信 -&gt;软件复位-&gt;检测通信-&gt;读取ID”Who I am”)\n">
+<meta property='og:url' content='https://129700.github.io/p/imu-xuexi/'>
+<meta property='og:site_name' content='129700 的笔记站'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='IMU' /><meta property='article:tag' content='传感器' /><meta property='article:tag' content='嵌入式' /><meta property='article:published_time' content='2026-06-21T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2026-06-21T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="IMU学习笔记">
+<meta name="twitter:description" content="IMU学习笔记 一、主要任务 1.读取BMI088的传感器数据\n2.滤波得出最优估计值\n3.姿态解算得出Yaw，Pitch，Roll\n二、具体实现 （1）BMI088读取 初始化 \u200b\t1.分别对陀螺仪和加速度计进行初始化流程（检测通信 -&gt;软件复位-&gt;检测通信-&gt;读取ID”Who I am”)\n">
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/img/avatar.png" 
+                        width="602"
+                        height="458"
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+                    <span class="emoji">🤖</span>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">129700 的笔记站</a></h1>
+            <h2 class="site-description">控制理论 · 嵌入式</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/129700'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/timeline/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>时间线</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/dm-motor.html' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>DM电机</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span></span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav class="toc-nav" id="TableOfContents">
+                
+  <ol>
+    <li><a href="#一主要任务">一、主要任务</a></li>
+    <li><a href="#二具体实现">二、具体实现</a>
+      <ol>
+        <li><a href="#1bmi088读取">（1）BMI088读取</a>
+          <ol>
+            <li><a href="#初始化"><strong>初始化</strong></a></li>
+            <li><a href="#轮询读取"><strong>轮询读取</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#2卡尔曼滤波">(2)卡尔曼滤波</a></li>
+        <li><a href="#阶段一预测时间更新">阶段一：预测（时间更新）</a>
+          <ol>
+            <li><a href="#1-预测状态先验估计">1. 预测状态（先验估计）</a></li>
+            <li><a href="#2-预测协方差先验协方差">2. 预测协方差（先验协方差）</a></li>
+          </ol>
+        </li>
+        <li><a href="#阶段二更新量测更新">阶段二：更新（量测更新）</a>
+          <ol>
+            <li><a href="#3-计算卡尔曼增益">3. 计算卡尔曼增益</a></li>
+            <li><a href="#4-更新状态后验估计">4. 更新状态（后验估计）</a></li>
+            <li><a href="#5-更新协方差后验协方差">5. 更新协方差（后验协方差）</a></li>
+          </ol>
+        </li>
+        <li><a href="#3姿态解算">(3)姿态解算</a></li>
+      </ol>
+    </li>
+    <li><a href="#三其他">三、其他</a>
+      <ol>
+        <li><a href="#任务配置">任务配置</a></li>
+        <li><a href="#零漂校准">零漂校准</a></li>
+        <li><a href="#扩展卡尔曼滤波kef">扩展卡尔曼滤波（KEF)</a></li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/categories/%E7%AC%94%E8%AE%B0/" style="background-color: hsl(4, 60%, 84%); color: hsl(4, 60%, 15%);">
+                笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/imu-xuexi/">IMU学习笔记</a>
+        </h2>
+
+        
+    </div>
+
+    
+    
+    
+    
+    
+
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2026-06-21T00:00:00Z'>2026-06-21</time>
+                
+
+                
+                
+                
+                
+
+                
+                    <span class="article-meta-sep">·</span>
+                    <span class="article-meta-chars">2809 字</span>
+                    <span class="article-meta-sep">·</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        约 6 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+    <aside class="article-toc">
+        <details>
+            <summary>
+                <div class="article-toc-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    <span></span>
+                </div>
+            </summary>
+            <nav class="toc-nav">
+                
+  <ol>
+    <li><a href="#一主要任务">一、主要任务</a></li>
+    <li><a href="#二具体实现">二、具体实现</a>
+      <ol>
+        <li><a href="#1bmi088读取">（1）BMI088读取</a>
+          <ol>
+            <li><a href="#初始化"><strong>初始化</strong></a></li>
+            <li><a href="#轮询读取"><strong>轮询读取</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#2卡尔曼滤波">(2)卡尔曼滤波</a></li>
+        <li><a href="#阶段一预测时间更新">阶段一：预测（时间更新）</a>
+          <ol>
+            <li><a href="#1-预测状态先验估计">1. 预测状态（先验估计）</a></li>
+            <li><a href="#2-预测协方差先验协方差">2. 预测协方差（先验协方差）</a></li>
+          </ol>
+        </li>
+        <li><a href="#阶段二更新量测更新">阶段二：更新（量测更新）</a>
+          <ol>
+            <li><a href="#3-计算卡尔曼增益">3. 计算卡尔曼增益</a></li>
+            <li><a href="#4-更新状态后验估计">4. 更新状态（后验估计）</a></li>
+            <li><a href="#5-更新协方差后验协方差">5. 更新协方差（后验协方差）</a></li>
+          </ol>
+        </li>
+        <li><a href="#3姿态解算">(3)姿态解算</a></li>
+      </ol>
+    </li>
+    <li><a href="#三其他">三、其他</a>
+      <ol>
+        <li><a href="#任务配置">任务配置</a></li>
+        <li><a href="#零漂校准">零漂校准</a></li>
+        <li><a href="#扩展卡尔曼滤波kef">扩展卡尔曼滤波（KEF)</a></li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </details>
+    </aside>
+    
+
+    <section class="article-content">
+    
+    
+    <h1 id="imu学习笔记">IMU学习笔记
+</h1><h2 id="一主要任务">一、主要任务
+</h2><p><strong>1.读取BMI088的传感器数据</strong></p>
+<p><strong>2.滤波得出最优估计值</strong></p>
+<p><strong>3.姿态解算得出Yaw，Pitch，Roll</strong></p>
+<hr>
+<h2 id="二具体实现">二、具体实现
+</h2><h3 id="1bmi088读取">（1）BMI088读取
+</h3><h4 id="初始化"><strong>初始化</strong>
+</h4><p>​		<strong>1.分别对陀螺仪和加速度计进行初始化流程</strong>（检测通信 -&gt;软件复位-&gt;检测通信-&gt;读取ID”Who I am”)</p>
+<p>​		<strong>2.零漂计算</strong>（采样6000次数据，去除极差，求平均作为零漂基准）</p>
+<p>​		<strong>3.寄存器配置</strong></p>
+<p><strong>加速度计</strong></p>
+<div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>寄存器</th>
+					<th style="text-align: center">配置值</th>
+					<th>说明</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>ACC_PWR_CTRL</code></td>
+					<td style="text-align: center"><code>ACC_ENABLE_ACC_ON</code></td>
+					<td>启用加速度计</td>
+			</tr>
+			<tr>
+					<td><code>ACC_PWR_CONF</code></td>
+					<td style="text-align: center"><code>ACC_PWR_ACTIVE_MODE</code></td>
+					<td>主动模式</td>
+			</tr>
+			<tr>
+					<td><code>ACC_CONF</code></td>
+					<td style="text-align: center"><code>ACC_NORMAL | ACC_800_HZ</code></td>
+					<td>正常模式，800Hz采样</td>
+			</tr>
+			<tr>
+					<td><code>ACC_RANGE</code></td>
+					<td style="text-align: center"><code>ACC_RANGE_6G</code></td>
+					<td>±6G量程</td>
+			</tr>
+			<tr>
+					<td><code>INT1_IO_CTRL</code></td>
+					<td style="text-align: center"><code>INT1_ENABLE | INT1_GPIO_PP</code></td>
+					<td>INT1引脚配置</td>
+			</tr>
+			<tr>
+					<td><code>INT_MAP_DATA</code></td>
+					<td style="text-align: center"><code>INT1_DRDY_INTERRUPT</code></td>
+					<td>数据就绪映射到INT1</td>
+			</tr>
+	</tbody>
+</table></div>
+<p><strong>陀螺仪</strong></p>
+<div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>寄存器</th>
+					<th>配置值</th>
+					<th>说明</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>GYRO_RANGE</code></td>
+					<td><code>GYRO_2000</code></td>
+					<td>±2000°/s量程</td>
+			</tr>
+			<tr>
+					<td><code>GYRO_BANDWIDTH</code></td>
+					<td><code>GYRO_2000_230_HZ</code></td>
+					<td>230Hz带宽</td>
+			</tr>
+			<tr>
+					<td><code>GYRO_LPM1</code></td>
+					<td><code>GYRO_NORMAL_MODE</code></td>
+					<td>正常工作模式</td>
+			</tr>
+			<tr>
+					<td><code>GYRO_CTRL</code></td>
+					<td><code>DRDY_ON</code></td>
+					<td>使能数据就绪中断</td>
+			</tr>
+			<tr>
+					<td><code>INT3_INT4_IO_CONF</code></td>
+					<td><code>INT3_GPIO_PP | INT3_GPIO_LOW</code></td>
+					<td>INT3引脚配置</td>
+			</tr>
+			<tr>
+					<td><code>INT3_INT4_IO_MAP</code></td>
+					<td><code>DRDY_IO_INT3</code></td>
+					<td>数据就绪映射到INT3</td>
+			</tr>
+	</tbody>
+</table></div>
+<hr>
+<h4 id="轮询读取"><strong>轮询读取</strong>
+</h4><p><strong>原始数据&ndash;&gt;单位转换&ndash;&gt;零漂处理</strong></p>
+<hr>
+<h3 id="2卡尔曼滤波">(2)卡尔曼滤波
+</h3><p><strong>目的：减少环境噪声和测量噪声造成的数据偏差</strong></p>
+<p>卡尔曼滤波分为<strong>预测</strong>和<strong>更新</strong>两个阶段，共五个核心公式：</p>
+<h3 id="阶段一预测时间更新">阶段一：预测（时间更新）
+</h3><h4 id="1-预测状态先验估计">1. 预测状态（先验估计）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">x&#39;(k) = F·x(k-1) + B·u(k-1)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>根据上一时刻的最优估计，预测当前时刻的状态。</p>
+<h4 id="2-预测协方差先验协方差">2. 预测协方差（先验协方差）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">P&#39;(k) = F·P(k-1)·F^T + Q
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>P</code> 表示状态估计的不确定性（协方差矩阵），<code>Q</code> 是过程噪声协方差。</p>
+<h3 id="阶段二更新量测更新">阶段二：更新（量测更新）
+</h3><h4 id="3-计算卡尔曼增益">3. 计算卡尔曼增益
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">K(k) = P&#39;(k)·H^T · (H·P&#39;(k)·H^T + R)^(-1)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>卡尔曼增益 <code>K</code> 决定了预测值和测量值的权重：</p>
+<ul>
+<li><code>K</code> 接近0：更相信预测（测量噪声大）</li>
+<li><code>K</code> 接近1：更相信测量（模型不确定性大）</li>
+</ul>
+<h4 id="4-更新状态后验估计">4. 更新状态（后验估计）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-latex" data-lang="latex"><span class="line"><span class="cl">x(k) = x&#39;(k) + K(k)·(z(k) - H·x&#39;(k))
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>z(k) - H·x'(k)</code> 称为<strong>残差</strong>，表示测量值与预测值的差异。</p>
+<h4 id="5-更新协方差后验协方差">5. 更新协方差（后验协方差）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">P(k) = (I - K(k)·H)·P&#39;(k)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>更新后的协方差表示新估计的不确定性。</p>
+<h3 id="3姿态解算">(3)姿态解算
+</h3><p><strong>1.机体坐标系转导航坐标系</strong></p>
+<p><strong>2.四元数转为欧拉角</strong></p>
+<hr>
+<h2 id="三其他">三、其他
+</h2><h3 id="任务配置">任务配置
+</h3><p><strong>由于imu实时性要求较高，优先级因设置为最高（Real Time）</strong></p>
+<h3 id="零漂校准">零漂校准
+</h3><p><strong>正在参考其他战队方案&hellip;..</strong></p>
+<ul>
+<li>一阶低通滤波(<a class="link" href=".%5c%e9%9b%b6%e6%bc%82%e6%a0%a1%e5%87%86%e5%8e%9f%e7%90%86.md" >文华学院</a>)</li>
+<li>多次采样(6000+)求均值(<a class="link" href="" >王宏玺</a>)(越鹿)</li>
+<li>等温度稳定–&gt;丢弃前1000次数据(等待传感器稳定) –&gt;采集2000次求平均(北极熊)</li>
+</ul>
+<h3 id="扩展卡尔曼滤波kef">扩展卡尔曼滤波（KEF)
+</h3><p><strong>传统卡尔曼滤波主要针对线性系统，扩展可用于姿态解算等非线性系统（还在了解）</strong></p>
+<hr>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/imu/">IMU</a>
+        
+            <a href="/tags/%E4%BC%A0%E6%84%9F%E5%99%A8/">传感器</a>
+        
+            <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright inline-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const elementsToRender = [".main-article", ".widget--toc"];
+
+        elementsToRender.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    ignoredClasses: ["gist"]
+                });
+            }
+        });
+    });
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title"></h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/lingpiao-jiaozhun/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">BMI088 陀螺仪零漂校准原理</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/cmake-gcc-g/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CMake, GCC, G&#43;&#43;</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/c-yuyan-jichu/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">C语言基础</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/debug-shouce/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">DeBug手册</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/p/waishe-zai/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">外设再学习</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <script
+    src="https://giscus.app/client.js"
+    data-repo="129700/129700.github.io"
+    data-repo-id=""
+    data-category="Announcements"
+    data-category-id=""
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="zh-CN"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+    function setGiscusTheme(theme) {
+        let giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: theme,
+                        },
+                    },
+                },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", (e) => {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('light');
+            } else {
+                setGiscusTheme('dark_dimmed');
+            }
+        }
+    })();
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 129700 的笔记站
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.d00997a2f4a6ce525f496da0c3ae6ad392b0468b8a9024f23309fdfc75c67a35.js" defer></script>
+<div class="reading-progress" id="reading-progress"></div>
+
+<button class="back-to-top" id="back-to-top" title="回到顶部" aria-label="回到顶部">↑</button>
+
+<script>
+(function() {
+    var progressBar = document.getElementById('reading-progress');
+    if (progressBar) {
+        var ticking = false;
+        function updateProgress() {
+            var scrollTop = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+            progressBar.style.width = progress + '%';
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
+        }, { passive: true });
+    }
+
+    var backBtn = document.getElementById('back-to-top');
+    if (backBtn) {
+        var showTick = false;
+        function toggleBackBtn() {
+            if (window.scrollY > 400) backBtn.classList.add('is-visible');
+            else backBtn.classList.remove('is-visible');
+            showTick = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!showTick) { requestAnimationFrame(toggleBackBtn); showTick = true; }
+        }, { passive: true });
+
+        backBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+})();
+</script>
+
+
+    </body>
+</html>

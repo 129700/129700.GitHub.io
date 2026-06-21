@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head>
+	<meta name="generator" content="Hugo 0.163.2"><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="控制理论 · 嵌入式">
+<title>Page 3 - 129700 的笔记站</title>
+
+
+<link rel="canonical" href="https://129700.github.io/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.5842f16ef5c6cabdd0551c25300bc5b8ccac121d001e069211e22d7a9aca01c9.css"><meta property='og:title' content="129700 的笔记站">
+<meta property='og:description' content="控制理论 · 嵌入式">
+<meta property='og:url' content='https://129700.github.io/'>
+<meta property='og:site_name' content='129700 的笔记站'>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2026-06-21T00:00:00&#43;00:00 '/>
+<meta name="twitter:title" content="129700 的笔记站">
+<meta name="twitter:description" content="控制理论 · 嵌入式"><link rel="alternate" type="application/rss&#43;xml" href="https://129700.github.io/index.xml">
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    </head>
+    <body class="is-home-baiwumm">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/img/avatar.png" 
+                        width="602"
+                        height="458"
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+                    <span class="emoji">🤖</span>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">129700 的笔记站</a></h1>
+            <h2 class="site-description">控制理论 · 嵌入式</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/129700'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li  class='current'>
+            <a href='/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/timeline/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>时间线</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/dm-motor.html' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>DM电机</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span></span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+            <main class="main full-width">
+
+
+<header class="bw-top" id="bw-top">
+    <a class="bw-logo" href="/">
+        
+        
+            <div class="bw-logo__avatar"><img src="img/avatar.png" alt="129700 的笔记站"></div>
+        
+        <span class="bw-logo__text">129700 的笔记站</span>
+    </a>
+    <nav class="bw-nav">
+        <a href="/archives/">归档</a>
+        <a href="/categories/">分类</a>
+        <a href="/tags/">标签</a>
+        <a href="/links/">友链</a>
+        <button class="bw-nav__btn" id="bw-random" title="随机一篇文章">🎲</button>
+        <button class="bw-nav__btn" id="bw-search" title="搜索">🔍</button>
+        <button class="bw-nav__btn bw-theme-btn" id="bw-theme" title="切换主题">🌓</button>
+    </nav>
+</header>
+
+
+<section class="bw-hero">
+    <h1 class="bw-hero__title">记录一些学习，一些生活。</h1>
+    <p class="bw-hero__sub">控制理论、嵌入式开发的学习笔记。偶尔写点生活碎片，写给未来回头看的自己。</p>
+    <div class="bw-hero__stats">
+        <div class="bw-stat">
+            <span class="bw-stat__num">19</span>
+            <span class="bw-stat__label">文章</span>
+        </div>
+        <div class="bw-stat">
+            <span class="bw-stat__num">19</span>
+            <span class="bw-stat__label">标签</span>
+        </div>
+        <div class="bw-stat">
+            <span class="bw-stat__num" id="bw-blog-days">0</span>
+            <span class="bw-stat__label">天</span>
+        </div>
+    </div>
+</section>
+
+
+
+
+<section class="bw-moments">
+    <div class="bw-section__head">
+        <span class="bw-section__title">瞬间</span>
+        <span class="bw-section__sub">碎碎念</span>
+    </div>
+    <div class="bw-moments__grid">
+        
+        <div class="bw-moment">
+            <span class="bw-moment__date">2026-06-21</span>
+            <span class="bw-moment__text">好困</span>
+        </div>
+        
+    </div>
+</section>
+
+
+
+<section class="bw-categories">
+    <div class="bw-section__head">
+        <span class="bw-section__title">精选分类</span>
+    </div>
+    <div class="bw-categories__grid">
+        
+        <div class="bw-cat">
+            <div class="bw-cat__header">
+                <span class="bw-cat__icon">
+                    📂
+                    
+                </span>
+                <div class="bw-cat__info">
+                    <span class="bw-cat__name">笔记</span>
+                    <span class="bw-cat__count">13 篇文章</span>
+                </div>
+            </div>
+            <div class="bw-cat__articles">
+                
+                <a class="bw-cat__article" href="/p/lingpiao-jiaozhun/">
+                    
+                        <span class="bw-cat__thumb bw-cat__thumb--empty">📄</span>
+                    
+                    <span class="bw-cat__article-title">BMI088 陀螺仪零漂校准原理</span>
+                    <span class="bw-cat__article-date">06-21</span>
+                </a>
+                
+                <a class="bw-cat__article" href="/p/cmake-gcc-g/">
+                    
+                        <span class="bw-cat__thumb bw-cat__thumb--empty">📄</span>
+                    
+                    <span class="bw-cat__article-title">CMake, GCC, G&#43;&#43;</span>
+                    <span class="bw-cat__article-date">06-21</span>
+                </a>
+                
+            </div>
+            <a class="bw-cat__more" href="/categories/%E7%AC%94%E8%AE%B0/">查看全部 →</a>
+        </div>
+        
+        <div class="bw-cat">
+            <div class="bw-cat__header">
+                <span class="bw-cat__icon">
+                    �
+                    
+                </span>
+                <div class="bw-cat__info">
+                    <span class="bw-cat__name">教程</span>
+                    <span class="bw-cat__count">1 篇文章</span>
+                </div>
+            </div>
+            <div class="bw-cat__articles">
+                
+                <a class="bw-cat__article" href="/p/markdown-yufa/">
+                    
+                        <span class="bw-cat__thumb bw-cat__thumb--empty">📄</span>
+                    
+                    <span class="bw-cat__article-title">这是一级标题</span>
+                    <span class="bw-cat__article-date">06-21</span>
+                </a>
+                
+            </div>
+            <a class="bw-cat__more" href="/categories/%E6%95%99%E7%A8%8B/">查看全部 →</a>
+        </div>
+        
+    </div>
+</section>
+
+
+<section class="bw-friends">
+    <div class="bw-section__head">
+        <span class="bw-section__title">同频者</span>
+        <span class="bw-section__sub">友链</span>
+    </div>
+    <div class="bw-friends__row">
+        <a href="https://baiwumm.com/" target="_blank" rel="noopener">谜叶象限</a>
+        <a href="https://blog.liushen.fun/" target="_blank" rel="noopener">清羽飞扬</a>
+        <a href="https://wenke-chen.github.io/p/segway_pid/" target="_blank" rel="noopener">平衡车 PID</a>
+        <a href="https://www.robomaster.com/" target="_blank" rel="noopener">RoboMaster</a>
+        <a href="/links/">更多友链 →</a>
+    </div>
+</section>
+
+
+<footer class="bw-footer">
+    <div class="bw-footer__logo">📐 129700 的笔记站</div>
+    <div class="bw-footer__links">
+        <a href="https://github.com/129700" target="_blank" rel="noopener">GitHub</a>
+        <a href="/index.xml" target="_blank">RSS</a>
+        <a href="/about/">关于</a>
+    </div>
+    <div class="bw-footer__copy">
+        &copy; 2026 129700 的笔记站
+        <span class="bw-footer__sep">·</span>
+        <span>已运行 <strong id="bw-footer-days">0</strong> 天</span>
+    </div>
+</footer>
+
+
+<script>
+(function() {
+    var blogStart = new Date(2026, 0, 1);
+
+    function animateNum(el, target, dur) {
+        if (!el) return;
+        var t0 = performance.now();
+        function step(t) {
+            var p = Math.min((t - t0) / dur, 1);
+            var e = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.floor(target * e);
+            if (p < 1) requestAnimationFrame(step);
+            else el.textContent = target;
+        }
+        requestAnimationFrame(step);
+    }
+
+    var blogDays = Math.max(1, Math.floor((new Date() - blogStart) / 86400000));
+    var heroDays = document.getElementById('bw-blog-days');
+    var footerDays = document.getElementById('bw-footer-days');
+    if (heroDays) animateNum(heroDays, blogDays, 1800);
+    if (footerDays) footerDays.textContent = blogDays;
+
+    
+    var allPosts = ["\/p\/lingpiao-jiaozhun\/","\/p\/cmake-gcc-g\/","\/p\/c-yuyan-jichu\/","\/p\/debug-shouce\/","\/p\/freertos-semaphore\/","\/p\/imu-xuexi\/","\/p\/latex-xuexi\/","\/p\/chengxu-sheji\/","\/p\/dajiang-cban\/","\/p\/guanxun-zuotai\/","\/p\/kalman-filter\/","\/p\/waishe-zai\/","\/p\/freertos-jichu\/","\/p\/markdown-yufa\/","\/archives\/","\/layout-preview\/","\/timeline\/","\/search\/","\/links\/",];
+    var randomBtn = document.getElementById('bw-random');
+    if (randomBtn && allPosts.length > 0) {
+        randomBtn.addEventListener('click', function() {
+            location.href = allPosts[Math.floor(Math.random() * allPosts.length)];
+        });
+        randomBtn.style.cursor = 'pointer';
+    }
+
+    
+    var themeBtn = document.getElementById('bw-theme');
+    if (themeBtn) {
+        themeBtn.addEventListener('click', function() {
+            var html = document.documentElement;
+            var current = html.getAttribute('data-scheme');
+            var next = (current === 'dark') ? 'light' : 'dark';
+            html.setAttribute('data-scheme', next);
+            try { localStorage.setItem('preferred-scheme', next); } catch(e) {}
+            document.dispatchEvent(new CustomEvent('onColorSchemeChange', { detail: next }));
+        });
+    }
+
+    
+    var searchBtn = document.getElementById('bw-search');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            var input = document.querySelector('.search-form input') || document.querySelector('input[name="search"]') || document.querySelector('#search-input');
+            if (input) { input.focus(); input.scrollIntoView({ behavior: 'smooth' }); }
+        });
+    }
+
+    
+    var bwTop = document.getElementById('bw-top');
+    if (bwTop) {
+        var ticking = false;
+        function onScroll() {
+            if (window.scrollY > 60) bwTop.classList.add('is-scrolled');
+            else bwTop.classList.remove('is-scrolled');
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+        }, { passive: true });
+        onScroll();
+    }
+
+    
+    if ('IntersectionObserver' in window) {
+        var reveals = document.querySelectorAll('.bw-cat, .bw-moment, .bw-hero, .stagger-reveal');
+        var io = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    setTimeout(function() {
+                        entry.target.classList.add('is-revealed');
+                    }, Array.from(reveals).indexOf(entry.target) * 60);
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function(el) { el.classList.add('bw-reveal'); io.observe(el); });
+    }
+})();
+</script>
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.d00997a2f4a6ce525f496da0c3ae6ad392b0468b8a9024f23309fdfc75c67a35.js" defer></script>
+<div class="reading-progress" id="reading-progress"></div>
+
+<button class="back-to-top" id="back-to-top" title="回到顶部" aria-label="回到顶部">↑</button>
+
+<script>
+(function() {
+    var progressBar = document.getElementById('reading-progress');
+    if (progressBar) {
+        var ticking = false;
+        function updateProgress() {
+            var scrollTop = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+            progressBar.style.width = progress + '%';
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
+        }, { passive: true });
+    }
+
+    var backBtn = document.getElementById('back-to-top');
+    if (backBtn) {
+        var showTick = false;
+        function toggleBackBtn() {
+            if (window.scrollY > 400) backBtn.classList.add('is-visible');
+            else backBtn.classList.remove('is-visible');
+            showTick = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!showTick) { requestAnimationFrame(toggleBackBtn); showTick = true; }
+        }, { passive: true });
+
+        backBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+})();
+</script>
+
+
+    </body>
+</html>

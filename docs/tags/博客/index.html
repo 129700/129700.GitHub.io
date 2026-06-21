@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
-    <head><meta charset='utf-8'>
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="控制理论 · 嵌入式">
 <title>博客</title>
 
 
-<link rel="canonical" href="https://129700.github.io/tags/%E5%8D%9A%E5%AE%A2/">
+<link rel="canonical" href="http://localhost:1313/tags/%E5%8D%9A%E5%AE%A2/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
 
 
-<link rel="stylesheet" href="/scss/style.min.eeae010a8aca5755e90137b17c5d90f45768eb5f7f14f2e9beb27bd30890efec.css"><meta property='og:title' content="博客">
+<link rel="stylesheet" href="/scss/style.min.5842f16ef5c6cabdd0551c25300bc5b8ccac121d001e069211e22d7a9aca01c9.css"><meta property='og:title' content="博客">
 <meta property='og:description' content="控制理论 · 嵌入式">
-<meta property='og:url' content='https://129700.github.io/tags/%E5%8D%9A%E5%AE%A2/'>
+<meta property='og:url' content='http://localhost:1313/tags/%E5%8D%9A%E5%AE%A2/'>
 <meta property='og:site_name' content='129700 的笔记站'>
 <meta property='og:type' content='website'><meta property='og:updated_time' content=' 2026-06-18T00:00:00&#43;00:00 '/>
 <meta name="twitter:title" content="博客">
-<meta name="twitter:description" content="控制理论 · 嵌入式"><link rel="alternate" type="application/rss&#43;xml" href="https://129700.github.io/tags/%E5%8D%9A%E5%AE%A2/index.xml">
+<meta name="twitter:description" content="控制理论 · 嵌入式"><link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/tags/%E5%8D%9A%E5%AE%A2/index.xml">
     <link rel="shortcut icon" href="/img/favicon.png" />
 
     </head>
@@ -450,15 +450,22 @@
 
 
 
-<article class="article-card has-image">
+<article class="article-card stagger-reveal has-image">
     <a href="/p/welcome/" class="article-card-link">
         
         <div class="article-card-image">
-            <img alt="欢迎来到我的博客" loading="lazy" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=675&fit=crop">
+            <img alt="欢迎来到我的博客" height="225" loading="lazy" src="/photo-1499750310107-5fef28a66643_1332657034248200475_hu_87c1ac401abfcd9.jpg" srcset="/photo-1499750310107-5fef28a66643_1332657034248200475_hu_87c1ac401abfcd9.jpg 1x, /photo-1499750310107-5fef28a66643_1332657034248200475_hu_b76c135375634f6e.jpg 2x" width="400">
 
         </div>
         
         <div class="article-card-content">
+            
+            <div class="article-card-category">
+                
+                <span class="article-card-category-badge">教程</span>
+                
+            </div>
+            
             <h3 class="article-card-title">欢迎来到我的博客</h3>
             
             <p class="article-card-summary">这是我的第一篇博客文章，记录我的学习与成长。</p>
@@ -483,7 +490,9 @@
 
 
 
-                <span>1 分钟</span>
+                <span>约 1 分钟</span>
+                <span class="article-meta-sep">·</span>
+                <span class="article-meta-chars">510 字</span>
             </div>
         </div>
     </a>
@@ -511,7 +520,46 @@
             </main>
         </div>
         
-<script type="text/javascript" src="/ts/main.d00997a2f4a6ce525f496da0c3ae6ad392b0468b8a9024f23309fdfc75c67a35.js" defer></script>
+<script type="text/javascript" src="/ts/main.cdf7f14c0ac4a4b9ef24ee05d86a2a38a5eb8a9d22ed167ae5d9392e75adc45b.js" defer></script>
+<div class="reading-progress" id="reading-progress"></div>
+
+<button class="back-to-top" id="back-to-top" title="回到顶部" aria-label="回到顶部">↑</button>
+
+<script>
+(function() {
+    var progressBar = document.getElementById('reading-progress');
+    if (progressBar) {
+        var ticking = false;
+        function updateProgress() {
+            var scrollTop = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+            progressBar.style.width = progress + '%';
+            ticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
+        }, { passive: true });
+    }
+
+    var backBtn = document.getElementById('back-to-top');
+    if (backBtn) {
+        var showTick = false;
+        function toggleBackBtn() {
+            if (window.scrollY > 400) backBtn.classList.add('is-visible');
+            else backBtn.classList.remove('is-visible');
+            showTick = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!showTick) { requestAnimationFrame(toggleBackBtn); showTick = true; }
+        }, { passive: true });
+
+        backBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+})();
+</script>
 
 
     </body>

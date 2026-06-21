@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Latex on 129700 的笔记站</title>
+        <link>https://129700.github.io/tags/latex/</link>
+        <description>Recent content in Latex on 129700 的笔记站</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Sun, 21 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/tags/latex/index.xml" rel="self" type="application/rss+xml" /><item>
+            <title>Latex学习文档</title>
+            <link>https://129700.github.io/p/latex-xuexi/</link>
+            <pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate>
+            <guid>https://129700.github.io/p/latex-xuexi/</guid>
+            <description>&lt;h1 id=&#34;latex学习文档&#34;&gt;Latex学习文档&#xA;&lt;/h1&gt;&lt;h2 id=&#34;基础符号表示&#34;&gt;基础符号表示&#xA;&lt;/h2&gt;&lt;!--（只是为了在md中写公式，故只学了这) --&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;一希腊字母&#34;&gt;一、希腊字母&#xA;&lt;/h3&gt;&lt;h4 id=&#34;1直接用加上对应的英文&#34;&gt;1.直接用**/**加上对应的英文&#xA;&lt;/h4&gt;&lt;p&gt;&lt;em&gt;&lt;strong&gt;eg:&lt;/strong&gt;&lt;/em&gt;&#xA;&lt;/p&gt;&#xA;$$&#xA;\delta,\lambda\\&#xA;\Delta,\Lambda\\&#xA;\phi,\alpha,\beta\\&#xA;\option&#xA;$$&lt;h3 id=&#34;2常见希腊字母参考&#34;&gt;2.常见希腊字母参考&#xA;&lt;/h3&gt;&lt;h4 id=&#34;&#34;&gt;&lt;img src=&#34;C:\Users\ASUS\Pictures\Screenshots\屏幕截图 2026-04-23 234419.png&#34; alt=&#34;屏幕截图 2026-04-23 234419&#34; style=&#34;zoom:75%;&#34; /&gt;&#xA;&lt;/h4&gt;&lt;h3 id=&#34;二上下标&#34;&gt;二、上下标&#xA;&lt;/h3&gt;&lt;h4 id=&#34;1单一标&#34;&gt;1.单一标：&#xA;&lt;/h4&gt;$$&#xA;a_1,b^5&#xA;$$&lt;h4 id=&#34;2多个&#34;&gt;2.多个：&#xA;&lt;/h4&gt;$$&#xA;a_{12},B^{xy}\\&#xA;a_{\rm xy},b^{\text y}&#xA;$$&lt;h3 id=&#34;三分式与根式&#34;&gt;三、分式与根式&#xA;&lt;/h3&gt;$$&#xA;\frac r v\\&#xA;\frac {xy}{nb}\\&#xA;\sqrt a\\&#xA;\sqrt {\dfrac zc}\\&#xA;$$&lt;h3 id=&#34;四普通运算&#34;&gt;四、普通运算&#xA;&lt;/h3&gt;&lt;p&gt;$$&#xA;+-\&#xA;\times,\cdot,\div\&#xA;\pm,\mp\&lt;/p&gt;&#xA;&#xA;    &lt;blockquote&gt;&#xA;        &lt;p&gt;&amp;lt;,\ge,\le,\gg,\ll,\ne,\approx,\equiv\&#xA;\cap,\cup,\in,\notin,\subsetneqq,\varnothing\&#xA;\forall,\exists,\nexists\&#xA;\R,\mathbb R\&#xA;\cdots,\vdots,\ddots\&#xA;\infty,\partial,\nabla,\propto&#xA;$$&lt;/p&gt;&#xA;&#xA;    &lt;/blockquote&gt;&#xA;$$&#xA;\sin {\frac yx}\\&#xA;\log_1 x\\&#xA;\lim_{x \to \propto} y&#xA;$$$$&#xA;\sum,\prod,\\&#xA;\sum_{i=0}^{i\to \propto} F(x)\\&#xA;$$$$&#xA;\int ,\iint,\iiiint,\oint \\&#xA;\int_{-\propto}^{\propto}F(X)\\&#xA;$$&lt;h3 id=&#34;五标注符号&#34;&gt;五、标注符号&#xA;&lt;/h3&gt;$$&#xA;\vec x,\overrightarrow {ANN},\\&#xA;\bar x \\&#xA;$$&lt;img src=&#34;C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20260424001606025.png&#34; alt=&#34;image-20260424001606025&#34; style=&#34;zoom:67%;&#34; /&gt;&#xA;$$&#xA;\leftarrow ,\Rightarrow\\&#xA;$$&#xA;</description>
+        </item></channel>
+</rss>
