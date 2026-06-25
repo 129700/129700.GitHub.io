@@ -33,7 +33,7 @@ tags: ["RoboMaster", "嵌入式"]
 
 ## 一、创建任务
 
-<img src="C:/Users/ASUS/AppData/Roaming/Typora/typora-user-images/image-20260426134020522.png" alt="image-20260426134020522" style="zoom: 90%;" />
+<!-- TODO: 补充 FreeRTOS 任务创建界面截图 -->
 
 **TaskName: 任务名称**
 

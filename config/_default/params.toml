@@ -4,6 +4,8 @@ mainSections = ["post"]
 rssFullContent = true
 favicon        = "img/favicon.png"
 
+description = "嵌入式开发与控制理论学习笔记，涵盖STM32、FreeRTOS、卡尔曼滤波、PID控制、平衡车项目等技术分享"
+
 # Accepted values: "default", "lastmod"
 SortBy              = "default"
 

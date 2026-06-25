@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Pages on 129700 的笔记站</title>
-        <link>https://129700.github.io/page/</link>
+        <link>http://localhost:1313/page/</link>
         <description>Recent content in Pages on 129700 的笔记站</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sun, 06 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/page/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 06 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/page/index.xml" rel="self" type="application/rss+xml" /><item>
             <title>归档</title>
-            <link>https://129700.github.io/archives/</link>
+            <link>http://localhost:1313/archives/</link>
             <pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate>
-            <guid>https://129700.github.io/archives/</guid>
+            <guid>http://localhost:1313/archives/</guid>
             <description>&lt;p&gt;这里是所有文章的汇总归档，按年份和月份整理，方便翻阅。&lt;/p&gt;&#xA;</description>
         </item><item>
             <title>时间线</title>
-            <link>https://129700.github.io/timeline/</link>
+            <link>http://localhost:1313/timeline/</link>
             <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-            <guid>https://129700.github.io/timeline/</guid>
+            <guid>http://localhost:1313/timeline/</guid>
             <description>&lt;p&gt;这里是所有文章的时间线汇总，按发布时间倒序排列。&lt;/p&gt;&#xA;</description>
         </item><item>
             <title>搜索</title>
-            <link>https://129700.github.io/search/</link>
+            <link>http://localhost:1313/search/</link>
             <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-            <guid>https://129700.github.io/search/</guid>
+            <guid>http://localhost:1313/search/</guid>
             <description></description>
         </item><item>
             <title>友链</title>
-            <link>https://129700.github.io/links/</link>
+            <link>http://localhost:1313/links/</link>
             <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-            <guid>https://129700.github.io/links/</guid>
+            <guid>http://localhost:1313/links/</guid>
             <description>&lt;h2 id=&#34;关于友链&#34;&gt;关于友链&#xA;&lt;/h2&gt;&lt;p&gt;欢迎有相同兴趣的朋友与本博客交换友链，互相推荐优质资源。本博客主要关注：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;🤖 &lt;strong&gt;机器人&lt;/strong&gt; 与 &lt;strong&gt;嵌入式开发&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;🎛️ &lt;strong&gt;控制理论&lt;/strong&gt; 与 &lt;strong&gt;电机控制&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;🚗 &lt;strong&gt;RoboMaster&lt;/strong&gt; / &lt;strong&gt;平衡车&lt;/strong&gt; 相关项目&lt;/li&gt;&#xA;&lt;li&gt;📚 &lt;strong&gt;技术学习笔记&lt;/strong&gt; 与 &lt;strong&gt;知识分享&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;推荐阅读&#34;&gt;推荐阅读&#xA;&lt;/h2&gt;&lt;p&gt;如果你刚开始接触这些领域，以下资源会很有帮助：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;控制理论入门&lt;/strong&gt;：先从经典 PID 控制入手，理解比例、积分、微分的物理意义&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;嵌入式开发基础&lt;/strong&gt;：推荐从 STM32 系列开始，熟悉寄存器与 HAL 库两种开发方式&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;电机驱动实践&lt;/strong&gt;：直流减速电机、步进电机、舵机、无刷电机的控制方式各有特色&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;仿真与算法验证&lt;/strong&gt;：推荐使用 MATLAB/Simulink 或 Python 进行控制算法的先期仿真验证&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&#xA;    &lt;blockquote&gt;&#xA;        &lt;p&gt;注：部分网站的图标可能因站点策略调整而无法显示，链接本身仍然有效。&lt;/p&gt;&#xA;&#xA;    &lt;/blockquote&gt;&#xA;</description>
         </item></channel>
 </rss>

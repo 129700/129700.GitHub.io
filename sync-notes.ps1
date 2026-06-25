@@ -10,6 +10,7 @@ $DiaryFolder = $cfg.diary_folder
 $MomentsHeading = $cfg.moments_heading
 $Target = ".\_inbox"
 $MomentsFile = ".\data\moments.yaml"
+$PictureDir = Join-Path $Source "Picture"
 
 # Excluded folders
 $exclude = @(".obsidian", "Picture", ".git", ".trash", $DiaryFolder)
@@ -27,6 +28,67 @@ Remove-Item "$Target\*" -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "[INBOX] Cleaned" -ForegroundColor Gray
 
 $noteCount = 0
+$imgCount = 0
+
+function Copy-Images {
+    param([string]$Src, [string]$DestDir, [string]$Content)
+    $newContent = $Content
+
+    # Pattern 1: ![alt](D:\Robomaster\...\Picture\xxx.png) -> ![alt](xxx.png)
+    $absPattern = '!\[([^\]]*)\]\(([A-Z]:[^\)]*?Picture[\\/]([^\\/\)]+))\)'
+    $matches = [regex]::Matches($newContent, $absPattern)
+    foreach ($m in $matches) {
+        $fullPath = $m.Groups[2].Value
+        $fileName = $m.Groups[3].Value
+        if (Test-Path $fullPath) {
+            Copy-Item $fullPath -Destination (Join-Path $DestDir $fileName) -Force
+            $script:imgCount++
+            Write-Host "  [IMG] $fileName" -ForegroundColor DarkCyan
+        }
+        $newContent = $newContent.Replace($m.Groups[2].Value, $fileName)
+    }
+
+    # Pattern 2: Obsidian ![[Picture/xxx.png]] -> ![xxx](xxx.png)
+    $wikiPattern = '!\[\[(Picture[\\/]([^\]|]+)(?:\|[^\]]*)?)\]\]'
+    $wmatches = [regex]::Matches($newContent, $wikiPattern)
+    foreach ($wm in $wmatches) {
+        $imgPath = Join-Path $Source $wm.Groups[1].Value
+        $fileName = $wm.Groups[2].Value -replace '.*[\\/]',''
+        if (Test-Path $imgPath) {
+            Copy-Item $imgPath -Destination (Join-Path $DestDir $fileName) -Force
+            $script:imgCount++
+            Write-Host "  [IMG] $fileName (wiki)" -ForegroundColor DarkCyan
+        }
+        $newContent = $newContent.Replace($wm.Value, "![$fileName]($fileName)")
+    }
+
+    # Pattern 3: ![alt](../Picture/xxx.png) relative from vault
+    $relPattern = '!\[([^\]]*)\]\(([^\)]*?Picture[\\/]([^\\/\)]+))\)'
+    $rmatches = [regex]::Matches($newContent, $relPattern)
+    foreach ($rm in $rmatches) {
+        $relPath = $rm.Groups[2].Value -replace '/','\'
+        # Resolve relative to the source file's parent directory
+        $imgFull = Join-Path (Split-Path $Src -Parent) $relPath
+        $imgFull = [System.IO.Path]::GetFullPath($imgFull)
+        $fileName = $rm.Groups[3].Value
+
+        # Also try from the vault Picture dir
+        $fromPicture = Join-Path $PictureDir $fileName
+        if (Test-Path $imgFull) {
+            Copy-Item $imgFull -Destination (Join-Path $DestDir $fileName) -Force
+            $script:imgCount++
+            Write-Host "  [IMG] $fileName (rel)" -ForegroundColor DarkCyan
+        } elseif (Test-Path $fromPicture) {
+            Copy-Item $fromPicture -Destination (Join-Path $DestDir $fileName) -Force
+            $script:imgCount++
+            Write-Host "  [IMG] $fileName (Picture)" -ForegroundColor DarkCyan
+        }
+        $newContent = $newContent.Replace($rm.Groups[2].Value, $fileName)
+    }
+
+    return $newContent
+}
+
 Get-ChildItem -Path $Source -Filter "*.md" -Recurse | ForEach-Object {
     $skip = $false
     foreach ($pat in $exclude) {
@@ -41,7 +103,10 @@ Get-ChildItem -Path $Source -Filter "*.md" -Recurse | ForEach-Object {
         if (-not (Test-Path $destDir)) {
             New-Item -Path $destDir -ItemType Directory -Force | Out-Null
         }
-        Copy-Item $_.FullName -Destination $dest -Force
+
+        $content = Get-Content $_.FullName -Encoding UTF8 -Raw
+        $newContent = Copy-Images -Src $_.FullName -DestDir $destDir -Content $content
+        [System.IO.File]::WriteAllText($dest, $newContent, [System.Text.UTF8Encoding]::new($false))
         $noteCount++
         Write-Host "  [NOTE] $rel" -ForegroundColor Green
     }
@@ -106,7 +171,8 @@ $momentsPath = (Resolve-Path $MomentsFile).Path
 # ===== Done =====
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host " Notes  : $noteCount" -ForegroundColor Green
+Write-Host " Notes : $noteCount" -ForegroundColor Green
+Write-Host " Images: $imgCount" -ForegroundColor DarkCyan
 Write-Host " Moments: $($moments.Count)" -ForegroundColor Magenta
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Next: tell me to publish." -ForegroundColor Yellow

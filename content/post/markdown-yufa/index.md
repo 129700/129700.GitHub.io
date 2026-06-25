@@ -60,9 +60,9 @@ xyz^一个尖号对之间的内容是上标小写的^xyz
 
 ---
 
-[上一节课的内容](..\..\03 motor_control\09 test_feedforward_pid\test_feedforward_pid)
+[示例内部链接](https://example.com)
 
-[.gitignore](..\..\03 motor_control\09 test_feedforward_pid\test_feedforward_pid\.gitignore) 
+[示例文件链接](https://example.com/file.gitignore) 
 
 https://ustc.edu.cn
 

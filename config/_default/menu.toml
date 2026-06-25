@@ -56,11 +56,11 @@
     [social.params]
         icon = "brand-github"
 
-[[social]]
-    identifier = "twitter"
-    name       = "Twitter"
-    url        = "https://twitter.com"
-    weight     = 2
-
-    [social.params]
-        icon = "brand-twitter"
+# [[social]]
+#     identifier = "twitter"
+#     name       = "Twitter"
+#     url        = "https://twitter.com"
+#     weight     = 2
+# 
+#     [social.params]
+#         icon = "brand-twitter"

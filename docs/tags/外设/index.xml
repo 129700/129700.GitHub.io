@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>外设 on 129700 的笔记站</title>
-        <link>https://129700.github.io/tags/%E5%A4%96%E8%AE%BE/</link>
+        <link>http://localhost:1313/tags/%E5%A4%96%E8%AE%BE/</link>
         <description>Recent content in 外设 on 129700 的笔记站</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sun, 21 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://129700.github.io/tags/%E5%A4%96%E8%AE%BE/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 21 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/tags/%E5%A4%96%E8%AE%BE/index.xml" rel="self" type="application/rss+xml" /><item>
             <title>外设再学习</title>
-            <link>https://129700.github.io/p/waishe-zai/</link>
+            <link>http://localhost:1313/p/waishe-zai/</link>
             <pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate>
-            <guid>https://129700.github.io/p/waishe-zai/</guid>
+            <guid>http://localhost:1313/p/waishe-zai/</guid>
             <description>&lt;h1 id=&#34;外设再学习&#34;&gt;外设再学习&#xA;&lt;/h1&gt;&lt;h2 id=&#34;pwm&#34;&gt;PWM&#xA;&lt;/h2&gt;&lt;h3 id=&#34;定时器的输出比较模式&#34;&gt;定时器的输出比较模式&#xA;&lt;/h3&gt;&#xA;    &lt;blockquote&gt;&#xA;        &lt;p&gt;pwmMode 1/2区别–&amp;gt;mode1：当计数器&amp;lt;设定值  –&amp;gt;有效()/mode2:计数器&amp;gt;设定值 –&amp;gt;有效&lt;/p&gt;&#xA;&lt;p&gt;有效电平取决于输出控制&lt;/p&gt;&#xA;&#xA;    &lt;/blockquote&gt;&#xA;&lt;p&gt;&lt;strong&gt;周期计算&lt;/strong&gt;&#xA;&lt;/p&gt;&#xA;$$&#xD;&#xA;f_{tim}:定时器时钟频率（也是总线频率）\\PSC:预分频值（对总线频率进行分频，好计算）\\ARR:自动重装载值(计数上限，到了触发中断/重载即清零)\\CCR：捕获比较值\\&#xD;&#xA;周期T_{pwm}=\frac{(PSC+1)*(ARR+1)}{f_{tim}}\\&#xD;&#xA;占空比 Duty=\frac{CCR}{ARR+1}&#xD;&#xD;&#xA;$$&lt;h3 id=&#34;pwmdma&#34;&gt;PWM+DMA&#xA;&lt;/h3&gt;</description>
         </item></channel>
 </rss>

@@ -13,7 +13,7 @@ tags: ["调试", "CAN", "嵌入式"]
 
 如图：
 
-![image-20260611000306321](D:\Robomaster\LearnMd\Picture\image-20260611000306321.png)
+![image-20260611000306321](image-20260611000306321.png)
 
 ErroCode:54288=0x100000, –>HAL_CAN_ERRO_NOT_STARTED
 

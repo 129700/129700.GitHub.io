@@ -1,15 +1,17 @@
 {{ define "body-class" }}is-home-baiwumm{{ end }}
-{{ define "left-sidebar" }}{{ end }}
-{{ define "right-sidebar" }}{{ end }}
 
 {{ define "main" }}
 
-{{/* ——— 顶栏：简洁固定毛玻璃 ——— */}}
+{{/* ——— 首页顶部导航条 ——— */}}
 <header class="bw-top" id="bw-top">
     <a class="bw-logo" href="/">
         {{ $avatar := .Site.Params.sidebar.avatar }}
         {{ if $avatar }}
-            <div class="bw-logo__avatar"><img src="{{ $avatar }}" alt="{{ .Site.Title }}"></div>
+            {{ $avatarUrl := $avatar }}
+            {{ if not (hasPrefix $avatar "http") }}
+                {{ $avatarUrl = printf "/%s" $avatar }}
+            {{ end }}
+            <div class="bw-logo__avatar"><img src="{{ $avatarUrl }}" alt="{{ .Site.Title }}"></div>
         {{ else }}
             <span class="bw-logo__emoji">📐</span>
         {{ end }}
@@ -20,7 +22,6 @@
         <a href="/categories/">分类</a>
         <a href="/tags/">标签</a>
         <a href="/links/">友链</a>
-        <button class="bw-nav__btn" id="bw-random" title="随机一篇文章">🎲</button>
         <button class="bw-nav__btn" id="bw-search" title="搜索">🔍</button>
         <button class="bw-nav__btn bw-theme-btn" id="bw-theme" title="切换主题">🌓</button>
     </nav>
@@ -45,25 +46,6 @@
         </div>
     </div>
 </section>
-
-{{/* ——— 瞬间 · 碎碎念 ——— */}}
-{{ $moments := site.Data.moments }}
-{{ if $moments }}
-<section class="bw-moments">
-    <div class="bw-section__head">
-        <span class="bw-section__title">瞬间</span>
-        <span class="bw-section__sub">碎碎念</span>
-    </div>
-    <div class="bw-moments__grid">
-        {{ range $moments }}
-        <div class="bw-moment">
-            <span class="bw-moment__date">{{ .date }}</span>
-            <span class="bw-moment__text">{{ .text }}</span>
-        </div>
-        {{ end }}
-    </div>
-</section>
-{{ end }}
 
 {{/* ——— 精选分类 ——— */}}
 <section class="bw-categories">
@@ -115,6 +97,25 @@
     </div>
 </section>
 
+{{/* ——— 瞬间 · 碎碎念 ——— */}}
+{{ $moments := site.Data.moments }}
+{{ if $moments }}
+<section class="bw-moments">
+    <div class="bw-section__head">
+        <span class="bw-section__title">瞬间</span>
+        <span class="bw-section__sub">碎碎念</span>
+    </div>
+    <div class="bw-moments__grid">
+        {{ range $moments }}
+        <div class="bw-moment">
+            <span class="bw-moment__date">{{ .date }}</span>
+            <span class="bw-moment__text">{{ .text }}</span>
+        </div>
+        {{ end }}
+    </div>
+</section>
+{{ end }}
+
 {{/* ——— 友链 ——— */}}
 <section class="bw-friends">
     <div class="bw-section__head">
@@ -125,29 +126,67 @@
         <a href="https://baiwumm.com/" target="_blank" rel="noopener">谜叶象限</a>
         <a href="https://blog.liushen.fun/" target="_blank" rel="noopener">清羽飞扬</a>
         <a href="https://wenke-chen.github.io/p/segway_pid/" target="_blank" rel="noopener">平衡车 PID</a>
-        <a href="https://www.robomaster.com/" target="_blank" rel="noopener">RoboMaster</a>
+        <a href="https://www.robomaster.com/" target="_blank" rel="noopener noreferrer">RoboMaster</a>
         <a href="/links/">更多友链 →</a>
     </div>
 </section>
 
-{{/* ——— 页脚 ——— */}}
-<footer class="bw-footer">
-    <div class="bw-footer__logo">📐 {{ .Site.Title }}</div>
-    <div class="bw-footer__links">
-        <a href="https://github.com/129700" target="_blank" rel="noopener">GitHub</a>
-        <a href="/index.xml" target="_blank">RSS</a>
-        <a href="/about/">关于</a>
-    </div>
-    <div class="bw-footer__copy">
-        &copy; {{ now.Format "2006" }} {{ .Site.Title }}
-        <span class="bw-footer__sep">·</span>
-        <span>已运行 <strong id="bw-footer-days">0</strong> 天</span>
-    </div>
-</footer>
-
-{{/* ——— 首页动画脚本 ——— */}}
+{{/* ——— 首页专属：数字滚动动画 + 运行天数 ——— */}}
 <script>
 (function() {
+    // ── 顶栏滚动缩窄 ──
+    var bwTop = document.getElementById('bw-top');
+    if (bwTop) {
+        var tticking = false;
+        function updateTop() {
+            if (window.scrollY > 60) bwTop.classList.add('is-scrolled');
+            else bwTop.classList.remove('is-scrolled');
+            tticking = false;
+        }
+        window.addEventListener('scroll', function() {
+            if (!tticking) { requestAnimationFrame(updateTop); tticking = true; }
+        }, { passive: true });
+    }
+
+    // ── 主题切换 ──
+    var themeBtn = document.getElementById('bw-theme');
+    if (themeBtn) {
+        var SCHEME_KEY = 'StackColorScheme';
+        themeBtn.addEventListener('click', function() {
+            var html = document.documentElement;
+            var current = html.getAttribute('data-scheme');
+            var next = (current === 'dark') ? 'light' : 'dark';
+            html.setAttribute('data-scheme', next);
+            try { localStorage.setItem(SCHEME_KEY, next); } catch(e) {}
+            document.dispatchEvent(new CustomEvent('onColorSchemeChange', { detail: next }));
+        });
+    }
+
+    // ── 搜索 ──
+    var searchBtn = document.getElementById('bw-search');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            location.href = '/search/';
+        });
+    }
+
+    // ── 交错渐显 ──
+    if ('IntersectionObserver' in window) {
+        var reveals = document.querySelectorAll('.bw-cat, .bw-moment, .bw-hero');
+        var io = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    setTimeout(function() {
+                        entry.target.classList.add('is-revealed');
+                    }, Array.from(reveals).indexOf(entry.target) * 60);
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function(el) { el.classList.add('bw-reveal'); io.observe(el); });
+    }
+
+    // ── 数字滚动 ──
     var blogStart = new Date(2026, 0, 1);
 
     function animateNum(el, target, dur) {
@@ -168,69 +207,6 @@
     var footerDays = document.getElementById('bw-footer-days');
     if (heroDays) animateNum(heroDays, blogDays, 1800);
     if (footerDays) footerDays.textContent = blogDays;
-
-    // 随机文章
-    var allPosts = [{{ range .Site.RegularPages }}"{{ .RelPermalink }}",{{ end }}];
-    var randomBtn = document.getElementById('bw-random');
-    if (randomBtn && allPosts.length > 0) {
-        randomBtn.addEventListener('click', function() {
-            location.href = allPosts[Math.floor(Math.random() * allPosts.length)];
-        });
-        randomBtn.style.cursor = 'pointer';
-    }
-
-    // 主题切换
-    var themeBtn = document.getElementById('bw-theme');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', function() {
-            var html = document.documentElement;
-            var current = html.getAttribute('data-scheme');
-            var next = (current === 'dark') ? 'light' : 'dark';
-            html.setAttribute('data-scheme', next);
-            try { localStorage.setItem('preferred-scheme', next); } catch(e) {}
-            document.dispatchEvent(new CustomEvent('onColorSchemeChange', { detail: next }));
-        });
-    }
-
-    // 搜索：聚焦主题自带搜索框
-    var searchBtn = document.getElementById('bw-search');
-    if (searchBtn) {
-        searchBtn.addEventListener('click', function() {
-            var input = document.querySelector('.search-form input') || document.querySelector('input[name="search"]') || document.querySelector('#search-input');
-            if (input) { input.focus(); input.scrollIntoView({ behavior: 'smooth' }); }
-        });
-    }
-
-    // 顶栏滚动缩窄
-    var bwTop = document.getElementById('bw-top');
-    if (bwTop) {
-        var ticking = false;
-        function onScroll() {
-            if (window.scrollY > 60) bwTop.classList.add('is-scrolled');
-            else bwTop.classList.remove('is-scrolled');
-            ticking = false;
-        }
-        window.addEventListener('scroll', function() {
-            if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
-        }, { passive: true });
-        onScroll();
-    }
-
-    // 交错渐显动画
-    if ('IntersectionObserver' in window) {
-        var reveals = document.querySelectorAll('.bw-cat, .bw-moment, .bw-hero, .stagger-reveal');
-        var io = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    setTimeout(function() {
-                        entry.target.classList.add('is-revealed');
-                    }, Array.from(reveals).indexOf(entry.target) * 60);
-                    io.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-        reveals.forEach(function(el) { el.classList.add('bw-reveal'); io.observe(el); });
-    }
 })();
 </script>
 {{ end }}
