@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts');
+const categoryMap = new Map<string, typeof allPosts>();
+allPosts.forEach(post => {
+    post.data.categories.forEach(cat => {
+        if (!categoryMap.has(cat)) categoryMap.set(cat, []);
+        categoryMap.get(cat)!.push(post);
+    });
+});
+const sortedCategories = Array.from(categoryMap.entries()).sort((a, b) => b[1].length - a[1].length);
+
+const catIcons: Record<string, string> = { '项目': '🧪', '学习': '📚', '教程': '📖', '读书': '📕', '笔记': '📝' };
+---
+
+<BaseLayout title="分类" pageClass="page-categories" activeNav="categories">
+    <div class="page-wrapper">
+        <main class="page-main">
+            <div class="post-container page-enter">
+                <h1 class="post-title">分类</h1>
+                <p style="color: var(--bw-ink-muted); margin-bottom: 2rem;">共 {sortedCategories.length} 个分类</p>
+                <div class="bw-categories-grid">
+                    {sortedCategories.map(([cat, posts]) => (
+                        <a class="bw-cat" href={`/categories/${cat}`} style="text-decoration: none;">
+                            <div class="bw-cat__header">
+                                <span class="bw-cat__icon">{catIcons[cat] || '📂'}</span>
+                                <div>
+                                    <div class="bw-cat__name">{cat}</div>
+                                    <div class="bw-cat__count">{posts.length} 篇文章</div>
+                                </div>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        </main>
+    </div>
+</BaseLayout>

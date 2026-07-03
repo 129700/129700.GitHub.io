@@ -1,0 +1,24 @@
+{
+  "name": "my-blog-v2",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "prebuild": "node scripts/generate-summaries.mjs",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.14",
+    "@astrojs/sitemap": "^3.3.0",
+    "astro": "^5.7.0",
+    "katex": "^0.17.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "sass": "^1.87.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}

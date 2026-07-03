@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const grouped = new Map<string, typeof allPosts>();
+sortedPosts.forEach(post => {
+    const key = post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' });
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key)!.push(post);
+});
+---
+
+<BaseLayout title="归档" pageClass="page-archives" activeNav="archives">
+    <div class="page-wrapper">
+        <main class="page-main">
+            <div class="post-container page-enter">
+                <h1 class="post-title">归档</h1>
+                <p style="color: var(--bw-ink-muted); margin-bottom: 2rem;">共 {allPosts.length} 篇文章</p>
+                {Array.from(grouped.entries()).map(([month, posts]) => (
+                    <div class="bw-reveal">
+                        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--bw-ink); margin: 2rem 0 1rem; padding-left: 0.75rem; border-left: 3px solid var(--accent-color);">
+                            {month}
+                            <span style="font-weight: 400; font-size: 0.9rem; color: var(--bw-ink-muted); margin-left: 8px;">{posts.length} 篇</span>
+                        </h2>
+                        <ul style="list-style: none;">
+                            {posts.map(post => (
+                                <li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--bw-border-light);">
+                                    <span style="font-size: 0.82rem; color: var(--bw-ink-faint); flex-shrink: 0; width: 60px;">
+                                        {post.data.date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}
+                                    </span>
+                                    <a href={`/post/${post.id}`} style="color: var(--bw-ink-light); font-size: 0.95rem; text-decoration: none;">{post.data.title}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+        </main>
+    </div>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import katex from 'katex';
+interface Props {
+    display?: boolean;
+    formula: string;
+}
+
+const { display = false, formula } = Astro.props;
+
+let html = '';
+try {
+    html = katex.renderToString(formula, {
+        displayMode: display,
+        throwOnError: false,
+        strict: false,
+    });
+} catch (e) {
+    html = `<span class="katex-error">${formula.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>`;
+}
+---
+
+<Fragment set:html={html} />

@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const url = Astro.url.searchParams.get('u') || '';
+---
+
+<BaseLayout title="安全跳转" pageClass="page-safego" activeNav="">
+    <div class="page-wrapper">
+        <main class="page-main">
+            <div class="post-container page-enter" style="text-align: center; padding-top: 4rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🔗</div>
+                <h1 class="post-title" style="text-align: center;">安全跳转</h1>
+                {url ? (
+                    <div style="margin-top: 2rem;">
+                        <p style="color: var(--bw-ink-muted); margin-bottom: 1rem;">你即将离开本站，前往以下链接：</p>
+                        <p style="word-break: break-all; padding: 1rem; background: var(--bw-surface-alt); border-radius: 8px; border: 1px solid var(--bw-border-light); font-size: 0.9rem; color: var(--accent-color); margin-bottom: 2rem;">
+                            {url}
+                        </p>
+                        <p style="color: var(--bw-ink-faint); margin-bottom: 1.5rem;"><span id="countdown">3</span> 秒后自动跳转</p>
+                        <a href={url} target="_blank" rel="noopener noreferrer"
+                           style="display: inline-block; padding: 10px 24px; background: var(--accent-color); color: var(--accent-color-text); border-radius: 8px; text-decoration: none; font-weight: 600;">
+                            立即前往 →
+                        </a>
+                    </div>
+                ) : (
+                    <div style="margin-top: 2rem;">
+                        <p style="color: var(--bw-ink-muted);">无效的跳转链接</p>
+                        <a href="/" style="color: var(--accent-color); margin-top: 1rem; display: inline-block;">返回首页</a>
+                    </div>
+                )}
+            </div>
+        </main>
+    </div>
+
+    {url && (
+        <script is:inline>
+            (function() {
+                var seconds = 3;
+                var el = document.getElementById('countdown');
+                var timer = setInterval(function() {
+                    seconds--;
+                    if (el) el.textContent = seconds;
+                    if (seconds <= 0) {
+                        clearInterval(timer);
+                        window.open(decodeURIComponent(new URLSearchParams(window.location.search).get('u') || ''), '_blank', 'noopener,noreferrer');
+                    }
+                }, 1000);
+            })();
+        </script>
+    )}
+</BaseLayout>

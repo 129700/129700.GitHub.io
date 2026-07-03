@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts');
+const searchData = allPosts.map(post => ({
+    title: post.data.title,
+    slug: post.id,
+    date: post.data.date.toLocaleDateString('zh-CN'),
+    tags: post.data.tags,
+    categories: post.data.categories,
+    description: post.data.description || '',
+}));
+---
+
+<BaseLayout title="搜索" pageClass="page-search" activeNav="">
+    <div class="page-wrapper">
+        <main class="page-main">
+            <div class="post-container page-enter">
+                <h1 class="post-title">搜索</h1>
+                <div style="margin-bottom: 2rem;">
+                    <input type="text" id="search-input" placeholder="输入关键词搜索文章..."
+                        style="width: 100%; padding: 12px 16px; font-size: 1rem; border: 1px solid var(--bw-border); border-radius: 12px; background: var(--bw-surface); color: var(--bw-ink); outline: none; transition: border-color 0.2s ease;"
+                        onfocus="this.style.borderColor='var(--accent-color)'" onblur="this.style.borderColor='var(--bw-border)'" />
+                </div>
+                <div id="search-results" class="bw-article-grid" style="grid-template-columns: 1fr;"></div>
+            </div>
+        </main>
+    </div>
+
+    <script define:vars={{ searchData }}>
+        var input = document.getElementById('search-input');
+        var results = document.getElementById('search-results');
+        input.addEventListener('input', function() {
+            var q = this.value.toLowerCase().trim();
+            if (!q) { results.innerHTML = ''; return; }
+            var matched = searchData.filter(function(post) {
+                return post.title.toLowerCase().includes(q) ||
+                       post.description.toLowerCase().includes(q) ||
+                       post.tags.some(function(t) { return t.toLowerCase().includes(q); }) ||
+                       post.categories.some(function(c) { return c.toLowerCase().includes(q); });
+            });
+            results.innerHTML = matched.map(function(post) {
+                return '<a class="bw-article-card" href="/post/' + post.slug + '">' +
+                    '<div class="bw-article-card__body">' +
+                    '<div class="bw-article-card__date">' + post.date + '</div>' +
+                    '<h3 class="bw-article-card__title">' + post.title + '</h3>' +
+                    '<p class="bw-article-card__excerpt">' + (post.description || '') + '</p>' +
+                    '<div class="bw-article-card__tags">' +
+                    post.tags.slice(0, 3).map(function(t) { return '<span class="bw-article-card__tag">#' + t + '</span>'; }).join('') +
+                    '</div></div></a>';
+            }).join('');
+        });
+    </script>
+</BaseLayout>

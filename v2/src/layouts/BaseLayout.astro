@@ -1,0 +1,571 @@
+---
+import '/node_modules/katex/dist/katex.min.css';
+
+interface Props {
+    title: string;
+    description?: string;
+    pageClass?: string;
+    image?: string;
+    activeNav?: string;
+}
+
+const { title, description = '', pageClass = '', image, activeNav = '' } = Astro.props;
+
+const workerUrl = import.meta.env.PUBLIC_WORKER_URL || '';
+
+const siteTitle = '129700 的笔记站';
+const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
+const desc = description || '嵌入式开发与控制理论学习笔记';
+
+const navItems = [
+    { href: '/', label: '首页', id: 'home' },
+    { href: '/archives', label: '归档', id: 'archives' },
+    { href: '/categories', label: '分类', id: 'categories' },
+    { href: '/tags', label: '标签', id: 'tags' },
+    { href: '/links', label: '友链', id: 'links' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-scheme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc}>
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteTitle} />
+    {image && <meta property="og:image" content={image} />}
+
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+    <style is:global>
+        @import '../styles/global.scss';
+        @import '../styles/animations.scss';
+        @import '../styles/navbar.scss';
+        @import '../styles/hero.scss';
+        @import '../styles/article-card.scss';
+        @import '../styles/article-detail.scss';
+        @import '../styles/sidebar.scss';
+        @import '../styles/moments.scss';
+        @import '../styles/utilities.scss';
+    </style>
+
+    <script is:inline>
+        (function() {
+            var saved = null;
+            try { saved = localStorage.getItem('StackColorScheme'); } catch(e) {}
+            if (saved === 'dark' || saved === 'light') {
+                document.documentElement.setAttribute('data-scheme', saved);
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-scheme', 'dark');
+            }
+        })();
+    </script>
+</head>
+<body class={pageClass} data-worker-url={workerUrl}>
+    <div class="bw-fullscreen-tip" id="bw-fullscreen-tip">
+        <span class="bw-fullscreen-tip__icon">⊡</span>
+        <span class="bw-fullscreen-tip__text">按 <kbd>F11</kbd> 全屏浏览效果更佳</span>
+        <button class="bw-fullscreen-tip__close" id="bw-fullscreen-tip-close" aria-label="关闭">&times;</button>
+    </div>
+
+    <!-- Navbar: fingerprint trigger + expandable bar -->
+    <div class="bw-navbar-wrapper" id="bw-navbar-wrapper">
+        <div class="bw-navbar-trigger" id="bw-navbar-trigger">
+            <svg class="bw-navbar-trigger__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/>
+                <path d="M12 6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6z"/>
+                <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                <path d="M7.5 7.5c.8.8 1.3 1.8 1.5 2.8"/>
+                <path d="M15 9c.2-1 .7-2 1.5-2.8"/>
+                <path d="M9 15c-.2 1-.7 2-1.5 2.8"/>
+                <path d="M16.5 16.5c-.8-.8-1.3-1.8-1.5-2.8"/>
+                <path d="M12 2v4"/>
+                <path d="M12 18v4"/>
+                <path d="M2 12h4"/>
+                <path d="M18 12h4"/>
+            </svg>
+        </div>
+        <nav class="bw-navbar" id="bw-navbar">
+            <a class="bw-navbar__logo" href="/">
+                <div class="bw-navbar__avatar"><img src="/img/avatar.png" alt="Avatar" /></div>
+                <span class="bw-navbar__title">{siteTitle}</span>
+            </a>
+            <div class="bw-navbar__nav">
+                {navItems.map(item => (
+                    <a class={`bw-navbar__link ${activeNav === item.id ? 'is-active' : ''}`} href={item.href}>{item.label}</a>
+                ))}
+            </div>
+            <div class="bw-navbar__actions">
+                <button class="bw-navbar__btn" title="搜索" onclick="location.href='/search'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </button>
+                <button class="bw-navbar__btn" title="切换主题" onclick="window.__toggleScheme()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <button class="bw-navbar__btn" id="bw-feature-btn" title="功能面板">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Feature Panel Overlay -->
+    <div class="bw-feature-overlay" id="bw-feature-overlay"></div>
+
+    <!-- Feature Panel -->
+    <div class="bw-feature-panel" id="bw-feature-panel">
+        <div class="bw-feature-panel__header">
+            <span class="bw-feature-panel__title">功能设置</span>
+            <button class="bw-feature-panel__close" onclick="document.getElementById('bw-feature-panel').classList.remove('is-open');document.getElementById('bw-feature-overlay').classList.remove('is-open');">&times;</button>
+        </div>
+        <div class="bw-feature-panel__body">
+            <div class="bw-feature-item">
+                <span class="bw-feature-item__label">字体切换</span>
+                <button class="bw-feature-item__btn" id="bw-font-switch">切换</button>
+            </div>
+            <div class="bw-feature-item">
+                <span class="bw-feature-item__label">评论显示</span>
+                <label class="bw-feature-item__toggle">
+                    <input type="checkbox" checked id="bw-comment-toggle" />
+                    <span class="bw-feature-item__slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <slot />
+
+    <!-- Footer -->
+    <footer class="bw-footer">
+        <div class="bw-glm-usage" id="bw-glm-usage" style="display:none">
+            <div class="bw-glm-usage__label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10h-10V2z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>GLM-4-Flash 本月额度</span>
+                <span class="bw-glm-usage__nums"><span id="bw-glm-used">--</span> / <span id="bw-glm-quota">2,000,000</span> tokens · <span id="bw-glm-pct">--%</span></span>
+            </div>
+            <div class="bw-glm-usage__track"><div class="bw-glm-usage__bar" id="bw-glm-bar"></div></div>
+        </div>
+        <p>&copy; 2026 {siteTitle} · 本站已苟活 <span id="bw-runtime">0 天</span></p>
+        <p>Powered by <a href="https://astro.build" target="_blank" rel="noopener">Astro</a></p>
+    </footer>
+
+    <script is:inline>
+    (function() {
+        var workerUrl = document.body.dataset.workerUrl;
+        if (!workerUrl) return;
+
+        function renderUsage(d) {
+            var wrap = document.getElementById('bw-glm-usage');
+            if (!wrap || !d.quota) return;
+            wrap.style.display = '';
+            document.getElementById('bw-glm-used').textContent = (d.used || 0).toLocaleString();
+            document.getElementById('bw-glm-quota').textContent = (d.quota || 2000000).toLocaleString();
+            document.getElementById('bw-glm-pct').textContent = (d.percent || 0) + '%';
+            var bar = document.getElementById('bw-glm-bar');
+            if (bar) {
+                bar.style.width = (d.percent || 0) + '%';
+                if (d.percent > 90) bar.classList.add('is-danger');
+                else if (d.percent > 70) bar.classList.add('is-warn');
+            }
+        }
+
+        fetch(workerUrl + '/api/usage')
+            .then(function(r) { return r.json(); })
+            .then(renderUsage)
+            .catch(function() {
+                // Worker 不可达时，显示进度条并标注离线
+                renderUsage({ used: 0, quota: 2000000, percent: 0 });
+                var nums = document.querySelector('.bw-glm-usage__nums');
+                if (nums) nums.textContent = '离线';
+            });
+    })();
+    </script>
+
+    <!-- Global Scripts -->
+    <script is:inline>
+        (function() {
+            var SCHEME_KEY = 'StackColorScheme';
+
+            function toggleScheme() {
+                var html = document.documentElement;
+                var current = html.getAttribute('data-scheme');
+                var next = (current === 'dark') ? 'light' : 'dark';
+                html.setAttribute('data-scheme', next);
+                try { localStorage.setItem(SCHEME_KEY, next); } catch(e) {}
+            }
+            window.__toggleScheme = toggleScheme;
+
+            // Navbar scroll
+            var navbarWrapper = document.getElementById('bw-navbar-wrapper');
+            if (navbarWrapper) {
+                var ticking = false;
+                function updateNavbar() {
+                    if (window.scrollY > 60) navbarWrapper.classList.add('is-scrolled');
+                    else navbarWrapper.classList.remove('is-scrolled');
+                    ticking = false;
+                }
+                window.addEventListener('scroll', function() {
+                    if (!ticking) { requestAnimationFrame(updateNavbar); ticking = true; }
+                }, { passive: true });
+            }
+
+            // Scroll reveal
+            if ('IntersectionObserver' in window) {
+                var io = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-revealed');
+                            io.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.05, rootMargin: '0px 0px 0px 0px' });
+                document.querySelectorAll('.bw-reveal').forEach(function(el) { io.observe(el); });
+            }
+
+            // Runtime counter
+            var runtimeEl = document.getElementById('bw-runtime');
+            if (runtimeEl) {
+                var blogStart = new Date(2026, 0, 1);
+                function updateRuntime() {
+                    var now = new Date();
+                    var diff = now - blogStart;
+                    var days = Math.floor(diff / 86400000);
+                    var hours = Math.floor((diff % 86400000) / 3600000);
+                    var mins = Math.floor((diff % 3600000) / 60000);
+                    var secs = Math.floor((diff % 60000) / 1000);
+                    runtimeEl.textContent = days + ' 天 ' + hours + ' 时 ' + mins + ' 分 ' + secs + ' 秒';
+                }
+                updateRuntime();
+                setInterval(updateRuntime, 1000);
+            }
+
+            // Feature panel toggle
+            var panelBtn = document.getElementById('bw-feature-btn');
+            var panel = document.getElementById('bw-feature-panel');
+            var panelOverlay = document.getElementById('bw-feature-overlay');
+            if (panelBtn && panel) {
+                panelBtn.addEventListener('click', function() {
+                    panel.classList.toggle('is-open');
+                    if (panelOverlay) panelOverlay.classList.toggle('is-open');
+                });
+                if (panelOverlay) {
+                    panelOverlay.addEventListener('click', function() {
+                        panel.classList.remove('is-open');
+                        panelOverlay.classList.remove('is-open');
+                    });
+                }
+            }
+
+            var tipEl = document.getElementById('bw-fullscreen-tip');
+            var tipClose = document.getElementById('bw-fullscreen-tip-close');
+            if (tipEl && tipClose) {
+                function isFullscreen() {
+                    return !!(document.fullscreenElement || (window.innerWidth >= screen.width * 0.95 && window.innerHeight >= screen.height * 0.92));
+                }
+                var TIP_KEY = 'bw-f11-tip-dismissed';
+                var dismissed = null;
+                try { dismissed = localStorage.getItem(TIP_KEY); } catch(e) {}
+                if (!dismissed && !isFullscreen()) {
+                    setTimeout(function() { tipEl.classList.add('is-visible'); }, 2000);
+                }
+                tipClose.addEventListener('click', function() {
+                    tipEl.classList.remove('is-visible');
+                    try { localStorage.setItem(TIP_KEY, Date.now()); } catch(e) {}
+                });
+            }
+
+            // Font switcher
+            var fontBtn = document.getElementById('bw-font-switch');
+            if (fontBtn) {
+                var currentFont = localStorage.getItem('bw-font') || 'default';
+                if (currentFont === 'serif') document.body.style.fontFamily = '"LXGW WenKai", "Noto Sans SC", serif';
+                fontBtn.addEventListener('click', function() {
+                    currentFont = currentFont === 'default' ? 'serif' : 'default';
+                    localStorage.setItem('bw-font', currentFont);
+                    if (currentFont === 'serif') {
+                        document.body.style.fontFamily = '"LXGW WenKai", "Noto Sans SC", serif';
+                    } else {
+                        document.body.style.fontFamily = '';
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <!-- Live2D 看板娘（L2Dwidget + 拖动 + 工具栏） -->
+    <script>
+      (function() {
+        var MODELS = [
+          { name: '黑猫', path: 'https://unpkg.com/live2d-widget-model-hijiki@1.0.5/assets/hijiki.model.json' },
+          { name: '白猫', path: 'https://unpkg.com/live2d-widget-model-tororo@1.0.5/assets/tororo.model.json' },
+          { name: '小黄鸡', path: 'https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json' },
+          { name: '蓝发少女', path: 'https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json' },
+        ];
+        var currentModel = parseInt(localStorage.getItem('bw-live2d-model') || '0', 10);
+        if (currentModel >= MODELS.length) currentModel = 0;
+
+        function getToolbarHTML(name) {
+          return '<div id="bw-live2d-toolbar">' +
+            '<button data-live2d-dir="-1" title="上一个">◀</button>' +
+            '<span id="bw-live2d-model-name">' + name + '</span>' +
+            '<button data-live2d-dir="1" title="下一个">▶</button>' +
+            '<button id="bw-live2d-drag" title="拖动">✥</button>' +
+            '</div>';
+        }
+
+        var s = document.createElement('script');
+        s.src = 'https://unpkg.com/live2d-widget@3.0.4/lib/L2Dwidget.min.js';
+        s.onload = function() {
+          function loadModel(idx) {
+            currentModel = idx;
+            localStorage.setItem('bw-live2d-model', idx);
+            var old = document.getElementById('live2d-widget');
+            if (old) old.remove();
+            var oldToolbar = document.getElementById('bw-live2d-toolbar');
+            if (oldToolbar) oldToolbar.remove();
+            var vw = window.innerWidth;
+            var scale = vw < 768 ? 0.6 : vw < 1200 ? 0.85 : 1;
+            var w = Math.round(90 * scale);
+            var h = Math.round(125 * scale);
+            L2Dwidget.init({
+              model: { jsonPath: MODELS[idx].path },
+              display: { superSample: 2, width: w, height: h, position: 'right', hOffset: 10, vOffset: -40 },
+              mobile: { show: true },
+              react: { opacityDefault: 0.85 },
+            });
+            setTimeout(function() { setupWidget(idx); }, 1000);
+          }
+
+          window.__live2dSwitchModel = function(dir) {
+            var next = (currentModel + dir + MODELS.length) % MODELS.length;
+            loadModel(next);
+          };
+
+          loadModel(currentModel);
+        };
+        s.onerror = function() {};
+        document.head.appendChild(s);
+
+        function setupWidget(idx) {
+          var widget = document.getElementById('live2d-widget');
+          if (!widget) return;
+
+          var toolbar = document.getElementById('bw-live2d-toolbar');
+          if (!toolbar) {
+            document.body.insertAdjacentHTML('beforeend', getToolbarHTML(MODELS[idx].name));
+            toolbar = document.getElementById('bw-live2d-toolbar');
+          }
+          var nameEl = document.getElementById('bw-live2d-model-name');
+          if (nameEl) nameEl.textContent = MODELS[idx].name;
+
+          function syncToolbar() {
+            if (!toolbar) return;
+            var canvas = widget.querySelector('canvas');
+            var rect = canvas ? canvas.getBoundingClientRect() : widget.getBoundingClientRect();
+            toolbar.style.left = (rect.left + rect.width / 2) + 'px';
+            toolbar.style.top = (rect.bottom + 8) + 'px';
+          }
+          syncToolbar();
+          window.addEventListener('resize', syncToolbar);
+          window.addEventListener('scroll', syncToolbar, { passive: true });
+
+          if (toolbar && toolbar.getAttribute('data-bound') !== 'true') {
+            toolbar.setAttribute('data-bound', 'true');
+            toolbar.addEventListener('click', function(e) {
+              var target = e.target;
+              if (!target) return;
+              var dir = target.getAttribute('data-live2d-dir');
+              if (dir !== null) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.__live2dSwitchModel(parseInt(dir, 10));
+              }
+            });
+          }
+
+          var dragMode = false;
+          var dragBtn = document.getElementById('bw-live2d-drag');
+          var startX, startY, origX, origY;
+
+          if (dragBtn && dragBtn.getAttribute('data-bound') !== 'true') {
+            dragBtn.setAttribute('data-bound', 'true');
+            dragBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              dragMode = !dragMode;
+              dragBtn.classList.toggle('is-active', dragMode);
+              var canvas = widget.querySelector('canvas');
+              if (canvas) canvas.style.cursor = dragMode ? 'grabbing' : 'grab';
+            });
+          }
+
+          widget.onmousedown = function(e) {
+            if (!dragMode) return;
+            startX = e.clientX; startY = e.clientY;
+            var rect = widget.getBoundingClientRect();
+            origX = rect.left; origY = rect.top;
+            e.preventDefault();
+
+            function onMove(e) {
+              var dx = e.clientX - startX, dy = e.clientY - startY;
+              widget.style.position = 'fixed';
+              widget.style.left = (origX + dx) + 'px';
+              widget.style.top = (origY + dy) + 'px';
+              widget.style.right = 'auto';
+              widget.style.bottom = 'auto';
+              syncToolbar();
+            }
+            function onUp() {
+              document.removeEventListener('mousemove', onMove);
+              document.removeEventListener('mouseup', onUp);
+              syncToolbar();
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+          };
+
+          widget.setAttribute('data-bw-ready', 'true');
+          var evt = new CustomEvent('bw-live2d-ready');
+          document.dispatchEvent(evt);
+        }
+      })();
+    </script>
+</body>
+</html>
+
+<style>
+    .bw-feature-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    .bw-feature-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .bw-feature-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 320px;
+        height: 100vh;
+        background: var(--bw-surface);
+        border-left: 1px solid var(--bw-border);
+        z-index: 1001;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        overflow-y: auto;
+    }
+    .bw-feature-panel.is-open {
+        transform: translateX(0);
+    }
+    .bw-feature-panel__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--bw-border-light);
+    }
+    .bw-feature-panel__title {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--bw-ink);
+    }
+    .bw-feature-panel__close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--bw-ink-muted);
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: background 0.2s ease;
+    }
+    .bw-feature-panel__close:hover {
+        background: var(--bw-accent-bg);
+    }
+    .bw-feature-panel__body {
+        padding: 1.25rem 1.5rem;
+    }
+    .bw-feature-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--bw-border-light);
+    }
+    .bw-feature-item__label {
+        font-size: 0.9rem;
+        color: var(--bw-ink-light);
+    }
+    .bw-feature-item__btn {
+        font-size: 0.82rem;
+        padding: 6px 14px;
+        border-radius: 6px;
+        border: 1px solid var(--bw-border);
+        background: var(--bw-surface-alt);
+        color: var(--bw-ink-muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .bw-feature-item__btn:hover {
+        background: var(--bw-accent-bg);
+        color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+    .bw-feature-item__toggle {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+    }
+    .bw-feature-item__toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .bw-feature-item__slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: var(--bw-border);
+        border-radius: 24px;
+        transition: 0.3s;
+    }
+    .bw-feature-item__slider::before {
+        content: '';
+        position: absolute;
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+    .bw-feature-item__toggle input:checked + .bw-feature-item__slider {
+        background: var(--accent-color);
+    }
+    .bw-feature-item__toggle input:checked + .bw-feature-item__slider::before {
+        transform: translateX(20px);
+    }
+    @media (max-width: 768px) {
+        .bw-feature-panel { width: 100%; }
+    }
+</style>

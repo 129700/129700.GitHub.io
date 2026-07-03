@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="友链" pageClass="page-links" activeNav="links">
+    <div class="page-wrapper">
+        <main class="page-main">
+            <div class="post-container page-enter">
+                <h1 class="post-title">友情链接</h1>
+                <p style="color: var(--bw-ink-muted); margin-bottom: 2rem;">互相学习，共同进步</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <a class="bw-cat" href="https://baiwumm.com/" target="_blank" rel="noopener" style="text-decoration: none;">
+                        <div class="bw-cat__header"><span class="bw-cat__icon">🌐</span><div><div class="bw-cat__name">谜叶象限</div><div class="bw-cat__count">baiwumm.com</div></div></div>
+                    </a>
+                    <a class="bw-cat" href="https://blog.liushen.fun/" target="_blank" rel="noopener" style="text-decoration: none;">
+                        <div class="bw-cat__header"><span class="bw-cat__icon">🪶</span><div><div class="bw-cat__name">清羽飞扬</div><div class="bw-cat__count">blog.liushen.fun</div></div></div>
+                    </a>
+                    <a class="bw-cat" href="https://www.robomaster.com/" target="_blank" rel="noopener" style="text-decoration: none;">
+                        <div class="bw-cat__header"><span class="bw-cat__icon">🤖</span><div><div class="bw-cat__name">RoboMaster</div><div class="bw-cat__count">robomaster.com</div></div></div>
+                    </a>
+                    <a class="bw-cat" href="https://haki-haki-haki.github.io/myblog_new/?p=index" target="_blank" rel="noopener" style="text-decoration: none;">
+                        <div class="bw-cat__header"><span class="bw-cat__icon">✨</span><div><div class="bw-cat__name">Haki Blog</div><div class="bw-cat__count">haki-haki-haki.github.io</div></div></div>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</BaseLayout>

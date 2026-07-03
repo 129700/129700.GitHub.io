@@ -1,0 +1,200 @@
+/* =========================================
+   通用区域标题
+   ========================================= */
+
+.bw-section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--bw-border);
+}
+
+.bw-section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--bw-ink);
+}
+
+.bw-section-sub {
+    font-size: 0.85rem;
+    color: var(--bw-ink-faint);
+}
+
+/* =========================================
+   精选分类
+   ========================================= */
+
+.bw-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.bw-cat {
+    background: var(--bw-surface);
+    border: 1px solid var(--bw-border-light);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.bw-cat:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-l2);
+}
+
+.bw-cat__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.bw-cat__icon {
+    font-size: 1.5rem;
+}
+
+.bw-cat__name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--bw-ink);
+}
+
+.bw-cat__count {
+    font-size: 0.8rem;
+    color: var(--bw-ink-muted);
+}
+
+.bw-cat__articles {
+    margin-bottom: 0.75rem;
+}
+
+.bw-cat__article {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 0.88rem;
+    color: var(--bw-ink-light);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.bw-cat__article:hover {
+    color: var(--accent-color);
+}
+
+.bw-cat__article-date {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--bw-ink-faint);
+}
+
+.bw-cat__more {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.bw-cat__more:hover {
+    color: var(--accent-color-darker);
+}
+
+/* =========================================
+   友链
+   ========================================= */
+
+.bw-friends-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.bw-friend-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--bw-surface);
+    border: 1px solid var(--bw-border-light);
+    border-radius: 20px;
+    font-size: 0.88rem;
+    color: var(--bw-ink-light);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.bw-friend-link:hover {
+    background: var(--bw-accent-bg);
+    color: var(--accent-color);
+    border-color: color-mix(in srgb, var(--accent-color) 30%, var(--bw-border));
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   页脚
+   ========================================= */
+
+.bw-footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--bw-ink-faint);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--bw-border-light);
+    margin-top: 2rem;
+}
+
+.bw-footer a {
+    color: var(--bw-ink-muted);
+}
+
+.bw-footer a:hover {
+    color: var(--accent-color);
+}
+
+.bw-glm-usage {
+    max-width: 420px;
+    margin: 0 auto 1rem;
+    text-align: left;
+}
+
+.bw-glm-usage__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--bw-ink-muted);
+    margin-bottom: 4px;
+}
+
+.bw-glm-usage__nums {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--bw-ink-faint);
+}
+
+.bw-glm-usage__track {
+    height: 4px;
+    background: var(--bw-border-light);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bw-glm-usage__bar {
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+    transition: width 0.6s ease;
+}
+
+.bw-glm-usage__bar.is-warn {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.bw-glm-usage__bar.is-danger {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}

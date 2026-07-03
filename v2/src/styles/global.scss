@@ -1,0 +1,160 @@
+/* =========================================
+   全局样式 & CSS 变量 — Editorial Luxury
+   ========================================= */
+
+:root {
+    --body-background: #fdfaf6;
+    --accent-color: #d4743d;
+    --accent-color-darker: #b85d2e;
+    --accent-color-text: #fff;
+
+    --bw-ink: #2d2218;
+    --bw-ink-light: #5c4a3a;
+    --bw-ink-muted: #8c7b6e;
+    --bw-ink-faint: #b8a99c;
+    --bw-surface: #fff;
+    --bw-surface-alt: #f7f2ed;
+    --bw-border: #e8ded3;
+    --bw-border-light: #f0e8de;
+    --bw-accent-bg: #fdf0e6;
+
+    --shadow-l1: 0 1px 2px rgba(20, 30, 60, 0.04);
+    --shadow-l2: 0 8px 24px rgba(20, 30, 60, 0.07);
+    --shadow-l3: 0 16px 48px rgba(20, 30, 60, 0.10);
+    --shadow-glow: 0 0 40px rgba(212, 116, 61, 0.08);
+
+    --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: "JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, monospace;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-base: 0.3s var(--ease-out-expo);
+    --transition-smooth: 0.6s var(--ease-out-expo);
+    --transition-slow: 0.8s var(--ease-out-expo);
+
+    --navbar-height: 64px;
+    --sidebar-width: 260px;
+    --content-max-width: 820px;
+    --page-max-width: 1320px;
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+}
+
+[data-scheme="dark"] {
+    --body-background: #131110;
+    --accent-color: #e8925b;
+    --accent-color-darker: #d0743d;
+    --accent-color-text: #fff;
+
+    --bw-ink: #e8e3dc;
+    --bw-ink-light: #b8afa4;
+    --bw-ink-muted: #8c8278;
+    --bw-ink-faint: #5c554c;
+    --bw-surface: #1c1917;
+    --bw-surface-alt: #161311;
+    --bw-border: #2d2925;
+    --bw-border-light: #24211d;
+    --bw-accent-bg: rgba(232, 146, 91, 0.08);
+
+    --shadow-l1: 0 1px 2px rgba(0, 0, 0, 0.15);
+    --shadow-l2: 0 8px 24px rgba(0, 0, 0, 0.25);
+    --shadow-l3: 0 16px 48px rgba(0, 0, 0, 0.35);
+    --shadow-glow: 0 0 40px rgba(232, 146, 91, 0.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-sans);
+    background: var(--body-background);
+    color: var(--bw-ink);
+    line-height: 1.7;
+    transition: background-color 0.5s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+a { color: var(--accent-color); text-decoration: none; transition: color var(--transition-base); }
+a:hover { color: var(--accent-color-darker); }
+img { max-width: 100%; height: auto; display: block; }
+
+/* —— Noise texture overlay —— */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+}
+[data-scheme="dark"] body::before { opacity: 0.04; }
+
+/* —— Page Layout —— */
+.page-wrapper {
+    display: flex;
+    min-height: 100vh;
+    padding-top: var(--navbar-height);
+}
+
+.page-main { flex: 1; min-width: 0; padding: 2rem 2rem 4rem; }
+
+.page-sidebar-left {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    padding: 2rem 1.5rem 2rem 2rem;
+    position: sticky;
+    top: var(--navbar-height);
+    height: calc(100vh - var(--navbar-height));
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.page-sidebar-right {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    padding: 2rem 2rem 2rem 1.5rem;
+    position: sticky;
+    top: var(--navbar-height);
+    height: calc(100vh - var(--navbar-height));
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.page-container { max-width: var(--page-max-width); margin: 0 auto; display: flex; gap: 0; }
+.page-content-area { flex: 1; min-width: 0; }
+
+/* —— Double-Bezel Card —— */
+.bw-shell {
+    background: var(--bw-surface-alt);
+    border: 1px solid var(--bw-border-light);
+    border-radius: var(--radius-xl);
+    padding: 3px;
+    transition: box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+}
+.bw-shell:hover {
+    box-shadow: var(--shadow-l2);
+    border-color: var(--bw-border);
+}
+.bw-shell__inner {
+    background: var(--bw-surface);
+    border-radius: calc(var(--radius-xl) - 3px);
+    overflow: hidden;
+}
+
+/* —— Responsive —— */
+@media (max-width: 1024px) { .page-sidebar-right { display: none; } }
+@media (max-width: 768px) {
+    .page-sidebar-left { display: none; }
+    .page-main { padding: 1rem 1rem 3rem; }
+}

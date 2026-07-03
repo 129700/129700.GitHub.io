@@ -1,0 +1,198 @@
+/* =========================================
+   导航栏 — 指纹触发 + hover 展开
+   ========================================= */
+
+/* —— Wrapper: 左上角固定定位 —— */
+.bw-navbar-wrapper {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+/* —— 指纹触发器 —— */
+.bw-navbar-trigger {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--bw-surface) 80%, transparent);
+    backdrop-filter: blur(16px) saturate(1.5);
+    -webkit-backdrop-filter: blur(16px) saturate(1.5);
+    border: 1px solid color-mix(in srgb, var(--bw-border) 50%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s var(--ease-out-expo);
+    box-shadow: var(--shadow-l1);
+}
+
+.bw-navbar-trigger__icon {
+    width: 22px;
+    height: 22px;
+    color: var(--accent-color);
+    transition: all 0.4s var(--ease-out-expo);
+}
+
+.bw-navbar-trigger:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-l2), var(--shadow-glow);
+}
+
+.bw-navbar-trigger:hover .bw-navbar-trigger__icon {
+    color: var(--accent-color-text);
+    transform: rotate(90deg) scale(0.85);
+}
+
+/* —— 展开后的导航栏 —— */
+.bw-navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px 0 12px;
+    background: color-mix(in srgb, var(--bw-surface) 80%, transparent);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid color-mix(in srgb, var(--bw-border) 50%, transparent);
+    border-radius: 999px;
+    box-shadow: var(--shadow-l2), var(--shadow-glow);
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition:
+        width 0.5s var(--ease-out-expo),
+        opacity 0.3s var(--ease-out-expo),
+        left 0.5s var(--ease-out-expo);
+}
+
+/* hover wrapper 时展开导航栏，隐藏触发器 */
+.bw-navbar-wrapper:hover .bw-navbar {
+    width: min(88vw, 680px);
+    opacity: 1;
+    pointer-events: auto;
+    left: 0;
+}
+
+.bw-navbar-wrapper:hover .bw-navbar-trigger {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+}
+
+/* —— Logo —— */
+.bw-navbar__logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--bw-ink);
+    transition: opacity var(--transition-base);
+    flex-shrink: 0;
+}
+.bw-navbar__logo:hover { opacity: 0.75; }
+
+.bw-navbar__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
+    transition: border-color var(--transition-base);
+}
+.bw-navbar__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.bw-navbar:hover .bw-navbar__avatar { border-color: var(--accent-color); }
+
+.bw-navbar__title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+/* —— 导航链接 —— */
+.bw-navbar__nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.bw-navbar__link {
+    color: var(--bw-ink-muted);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 999px;
+    transition: all 0.2s var(--ease-out-expo);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.bw-navbar__link:hover,
+.bw-navbar__link.is-active {
+    color: var(--accent-color);
+    background: var(--bw-accent-bg);
+}
+
+/* —— 右侧操作区 —— */
+.bw-navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.bw-navbar__btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out-expo);
+    color: var(--bw-ink-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bw-navbar__btn:hover {
+    background: var(--bw-accent-bg);
+    color: var(--accent-color);
+    transform: scale(1.05);
+}
+.bw-navbar__btn:active { transform: scale(0.95); }
+.bw-navbar__btn svg { width: 16px; height: 16px; }
+
+/* —— 滚动后：导航栏常驻显示 —— */
+.bw-navbar-wrapper.is-scrolled .bw-navbar {
+    width: min(88vw, 680px);
+    opacity: 1;
+    pointer-events: auto;
+    left: 0;
+}
+
+.bw-navbar-wrapper.is-scrolled .bw-navbar-trigger {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+}
+
+/* —— 移动端 —— */
+@media (max-width: 768px) {
+    .bw-navbar-wrapper { top: 12px; left: 12px; }
+    .bw-navbar-wrapper:hover .bw-navbar,
+    .bw-navbar-wrapper.is-scrolled .bw-navbar {
+        width: calc(100vw - 24px);
+    }
+    .bw-navbar__nav { display: none; }
+    .bw-navbar__title { font-size: 12px; }
+}
+
+/* —— page-wrapper 顶部间距 —— */
+.page-wrapper { padding-top: calc(var(--navbar-height) + 8px); }
