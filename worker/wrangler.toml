@@ -1,0 +1,12 @@
+name = "my-blog-greeter"
+main = "index.js"
+compatibility_date = "2025-06-22"
+
+[vars]
+TENCENT_KEY = "C3EBZ-CFS37-HVBX3-HJFP2-CDOSS-PDFI5"
+ZHIPU_KEY = "445df3d798f54acf82bb09466b6baac9.wOAegEhfFUpCZOvP"
+
+# GLM 用量统计 KV 绑定
+[[kv_namespaces]]
+binding = "GLM_USAGE"
+id = "e863119de9574f489adc7f51adcbff18"

@@ -1,0 +1,100 @@
+---
+interface Props {
+    type?: 'info' | 'warning' | 'tip' | 'formula';
+    title?: string;
+}
+
+const {
+    type = 'info',
+    title,
+} = Astro.props;
+
+const icons: Record<string, string> = {
+    info: 'ℹ',
+    warning: '⚠',
+    tip: '💡',
+    formula: '📐',
+};
+
+const icon = icons[type] || icons.info;
+---
+
+<div class="bw-callout bw-callout--{type}">
+    <span class="bw-callout__icon">{icon}</span>
+    <div class="bw-callout__body">
+        {title && <strong class="bw-callout__title">{title}</strong>}
+        <div class="bw-callout__content">
+            <slot />
+        </div>
+    </div>
+</div>
+
+<style>
+    .bw-callout {
+        display: flex;
+        gap: 12px;
+        padding: 14px 18px;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        border: 1px solid var(--bw-border-light);
+        background: var(--bw-surface);
+        font-size: 0.92rem;
+        line-height: 1.65;
+    }
+
+    .bw-callout--warning {
+        background: #fef9e7;
+        border-color: #f0c040;
+    }
+
+    .bw-callout--tip {
+        background: #ecfdf5;
+        border-color: #6ee7b7;
+    }
+
+    .bw-callout--formula {
+        background: #eff6ff;
+        border-color: #93c5fd;
+        font-family: var(--font-mono, monospace);
+    }
+
+    [data-scheme="dark"] .bw-callout--warning {
+        background: #2a2210;
+        border-color: #6d5000;
+    }
+
+    [data-scheme="dark"] .bw-callout--tip {
+        background: #0a2a1f;
+        border-color: #1a6b47;
+    }
+
+    [data-scheme="dark"] .bw-callout--formula {
+        background: #0f1f3a;
+        border-color: #2a5080;
+    }
+
+    .bw-callout__icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        padding-top: 1px;
+    }
+
+    .bw-callout__body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .bw-callout__title {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--bw-ink);
+    }
+
+    .bw-callout__content :global(p) {
+        margin: 0;
+    }
+
+    .bw-callout__content :global(p + p) {
+        margin-top: 0.5rem;
+    }
+</style>

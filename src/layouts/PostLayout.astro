@@ -1,0 +1,90 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface Props {
+    title: string;
+    date: Date;
+    updated?: Date;
+    categories: string[];
+    tags: string[];
+    description?: string;
+    wordCount?: number;
+    readingTime?: number;
+    image?: string;
+    slug?: string;
+    bodyExcerpt?: string;
+}
+
+const { title, date, updated, categories, tags, description, wordCount = 0, readingTime = 0, image, slug, bodyExcerpt = '' } = Astro.props;
+
+import BaseLayout from './BaseLayout.astro';
+import AIAssistant from '../components/AIAssistant.astro';
+
+let aiSummary = description || '';
+if (!aiSummary && slug) {
+    try {
+        const summaryFile = path.resolve('src/data/ai-summaries.json');
+        if (fs.existsSync(summaryFile)) {
+            const summaries = JSON.parse(fs.readFileSync(summaryFile, 'utf-8'));
+            if (summaries[slug]) aiSummary = summaries[slug];
+        }
+    } catch {}
+}
+
+const formatDate = (d: Date) => d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+const mins = Math.max(1, Math.ceil(readingTime));
+---
+
+<BaseLayout title={title} description={description} pageClass="page-post post-page" image={image} activeNav="">
+    <div class="page-wrapper">
+        <main class="page-main">
+            <div class="post-container page-enter">
+                <div class="post-breadcrumb">
+                    {categories.map((cat) => (
+                        <a href={`/categories/${cat}`}>{cat}</a>
+                    ))}
+                </div>
+
+                <h1 class="post-title">{title}</h1>
+
+                <div class="post-tags">
+                    {tags.map((tag) => (
+                        <a class="post-tag" href={`/tags/${tag}`}>#{tag}</a>
+                    ))}
+                </div>
+
+                <div class="post-info-bar">
+                    <div class="post-info-bar__author">
+                        <img class="post-info-bar__avatar" src="/img/avatar.png" alt="Author" />
+                        <span class="post-info-bar__name">129700</span>
+                    </div>
+                    <div class="post-info-bar__meta">
+                        <span>📅 {formatDate(date)}</span>
+                        {updated && <span>🔄 {formatDate(updated)}</span>}
+                        {wordCount > 0 && <span>📝 {wordCount} 字</span>}
+                        <span>⏱️ {mins} 分钟</span>
+                    </div>
+                </div>
+
+                <div class="post-ai-summary">
+                    <div class="post-ai-summary__header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><circle cx="12" cy="12" r="4"/></svg>
+                        AI 摘要
+                    </div>
+                    <div class="post-ai-summary__text">{aiSummary || '暂无摘要'}</div>
+                    <div class="post-ai-summary__model">{aiSummary ? 'AI 摘要 · GLM-4' : '暂无 AI 摘要'}</div>
+                </div>
+
+                <article class="post-content">
+                    <slot />
+                </article>
+
+                <div class="post-footer">
+                    <div class="post-license">📄 Licensed under CC BY-NC-SA 4.0</div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <AIAssistant title={title} bodyExcerpt={bodyExcerpt || description || ''} />
+</BaseLayout>

@@ -1,0 +1,147 @@
+---
+interface Props {
+    title: string;
+    bodyExcerpt?: string;
+}
+
+const { title, bodyExcerpt = '' } = Astro.props;
+
+const contextText = bodyExcerpt.slice(0, 800).replace(/`/g, '\\`');
+---
+
+<div class="bw-ai-assistant" id="bw-ai-assistant" data-title={title} data-context={contextText}>
+    <button class="bw-ai-assistant__toggle" id="bw-ai-toggle" aria-label="AI 问答" title="AI 问答">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M8 9h8"/><path d="M8 13h6"/>
+        </svg>
+    </button>
+
+    <div class="bw-ai-assistant__panel" id="bw-ai-panel">
+        <div class="bw-ai-assistant__header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>AI 问答</span>
+            <span class="bw-ai-assistant__context-tag">{title.slice(0, 12)}</span>
+        </div>
+
+        <div class="bw-ai-assistant__messages" id="bw-ai-messages">
+            <div class="bw-ai-assistant__msg bw-ai-assistant__msg--ai">
+                <div class="bw-ai-assistant__avatar">🤖</div>
+                <div class="bw-ai-assistant__bubble">我是 AI 助手。关于这篇文章有任何疑问，随时问我 ~</div>
+            </div>
+        </div>
+
+        <div class="bw-ai-assistant__input-row">
+            <input
+                type="text"
+                class="bw-ai-assistant__input"
+                id="bw-ai-input"
+                placeholder="输入你的问题..."
+                maxlength="200"
+            />
+            <button class="bw-ai-assistant__send" id="bw-ai-send" aria-label="发送">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var el = document.getElementById('bw-ai-assistant');
+    var ARTICLE_TITLE = el.dataset.title || '';
+    var ARTICLE_CTX = el.dataset.context || '';
+    var WORKER_URL = document.body.dataset.workerUrl || '';
+
+    var panel = document.getElementById('bw-ai-panel');
+    var toggle = document.getElementById('bw-ai-toggle');
+    var messages = document.getElementById('bw-ai-messages');
+    var input = document.getElementById('bw-ai-input');
+    var sendBtn = document.getElementById('bw-ai-send');
+    var isOpen = false;
+    var isLoading = false;
+
+    function openPanel() {
+        isOpen = true;
+        panel.classList.add('is-open');
+        toggle.classList.add('is-active');
+        setTimeout(function() { input.focus(); }, 300);
+    }
+
+    function closePanel() {
+        isOpen = false;
+        panel.classList.remove('is-open');
+        toggle.classList.remove('is-active');
+    }
+
+    toggle.addEventListener('click', function() {
+        if (isOpen) closePanel();
+        else openPanel();
+    });
+
+    function addMessage(role, text) {
+        var div = document.createElement('div');
+        div.className = 'bw-ai-assistant__msg bw-ai-assistant__msg--' + role;
+        var avatar = role === 'ai' ? '🤖' : '👤';
+        div.innerHTML = '<div class="bw-ai-assistant__avatar">' + avatar + '</div><div class="bw-ai-assistant__bubble">' + escapeHTML(text) + '</div>';
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addLoading() {
+        var div = document.createElement('div');
+        div.className = 'bw-ai-assistant__msg bw-ai-assistant__msg--ai bw-ai-assistant__loading';
+        div.innerHTML = '<div class="bw-ai-assistant__avatar">🤖</div><div class="bw-ai-assistant__bubble"><span class="bw-ai-dot">•</span><span class="bw-ai-dot">•</span><span class="bw-ai-dot">•</span></div>';
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+        return div;
+    }
+
+    function escapeHTML(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    async function askAI(question) {
+        if (isLoading) return;
+        isLoading = true;
+        sendBtn.disabled = true;
+
+        addMessage('user', question);
+        var loader = addLoading();
+
+        var prompt = '你是一个技术博客的AI助手。当前文章标题：《' + ARTICLE_TITLE + '》。';
+        if (ARTICLE_CTX) prompt += '文章摘要：' + ARTICLE_CTX + '。';
+        prompt += '请根据文章内容回答访客的问题。如果问题与文章无关，也可以简短闲聊。回答尽量简洁，100字以内。访客问：' + question;
+
+        try {
+            var res = await fetch(WORKER_URL + '/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt, max_tokens: 200, temperature: 0.7 })
+            });
+            var data = await res.json();
+            var answer = data.answer || '唔...暂时没有想好怎么回答，换个问题试试？';
+            loader.remove();
+            addMessage('ai', answer);
+        } catch (e) {
+            loader.remove();
+            addMessage('ai', '网络出了点问题，请稍后再试 ~');
+        }
+        isLoading = false;
+        sendBtn.disabled = false;
+    }
+
+    function sendMessage() {
+        var q = input.value.trim();
+        if (!q || isLoading) return;
+        input.value = '';
+        if (!isOpen) openPanel();
+        askAI(q);
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+})();
+</script>
