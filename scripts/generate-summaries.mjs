@@ -104,4 +104,4 @@ async function main() {
     console.log(`\nSaved ${Object.keys(summaries).length} summaries to ${path.relative(ROOT, OUTPUT)}`);
 }
 
-await main();
+await main().catch(err => { console.error('Prebuild warning:', err.message); process.exit(0); });
