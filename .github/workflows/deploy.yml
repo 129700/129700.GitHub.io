@@ -31,9 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        env:
-          PUBLIC_WORKER_URL: ""
-        run: npm run build
+        run: npx astro build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
