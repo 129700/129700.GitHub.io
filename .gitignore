@@ -4,3 +4,5 @@ dist/
 .DS_Store
 *.log
 .env
+.local-kv.json
+local-worker.cjs
