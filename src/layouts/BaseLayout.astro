@@ -27,7 +27,7 @@ const navItems = [
 ---
 
 <!DOCTYPE html>
-<html lang="zh-CN" data-scheme="light">
+<html lang="zh-CN" data-scheme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,8 +45,8 @@ const navItems = [
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" />
 
     <style is:global>
         @import '../styles/global.scss';
@@ -325,18 +325,18 @@ const navItems = [
     <script is:inline>
       (function() {
         var MODELS = [
-          { name: '黑猫', path: 'https://unpkg.com/live2d-widget-model-hijiki@1.0.5/assets/hijiki.model.json' },
-          { name: '白猫', path: 'https://unpkg.com/live2d-widget-model-tororo@1.0.5/assets/tororo.model.json' },
-          { name: '小黄鸡', path: 'https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json' },
-          { name: '蓝发少女', path: 'https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json' },
-          { name: '初音未来', path: 'https://unpkg.com/live2d-widget-model-miku@1.0.5/assets/miku.model.json' },
-          { name: '小春', path: 'https://unpkg.com/live2d-widget-model-haru@1.0.5/assets/haru.model.json' },
-          { name: '响', path: 'https://unpkg.com/live2d-widget-model-hibiki@1.0.5/assets/hibiki.model.json' },
-          { name: '和泉', path: 'https://unpkg.com/live2d-widget-model-izumi@1.0.5/assets/izumi.model.json' },
-          { name: '千岁', path: 'https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json' },
-          { name: '汪子', path: 'https://unpkg.com/live2d-widget-model-wanko@1.0.5/assets/wanko.model.json' },
-          { name: '沉木', path: 'https://unpkg.com/live2d-widget-model-tsumiki@1.0.5/assets/tsumiki.model.json' },
-          { name: 'Epsilon', path: 'https://unpkg.com/live2d-widget-model-epsilon2_1@1.0.5/assets/epsilon2_1.model.json' },
+          { name: '黑猫', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-hijiki@1.0.5/assets/hijiki.model.json' },
+          { name: '白猫', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-tororo@1.0.5/assets/tororo.model.json' },
+          { name: '小黄鸡', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json' },
+          { name: '蓝发少女', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json' },
+          { name: '初音未来', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json' },
+          { name: '小春', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-haru@1.0.5/assets/haru.model.json' },
+          { name: '响', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-hibiki@1.0.5/assets/hibiki.model.json' },
+          { name: '和泉', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-izumi@1.0.5/assets/izumi.model.json' },
+          { name: '千岁', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json' },
+          { name: '汪子', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-wanko@1.0.5/assets/wanko.model.json' },
+          { name: '沉木', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-tsumiki@1.0.5/assets/tsumiki.model.json' },
+          { name: 'Epsilon', path: 'https://cdn.jsdelivr.net/npm/live2d-widget-model-epsilon2_1@1.0.5/assets/epsilon2_1.model.json' },
         ];
         var currentModel = parseInt(localStorage.getItem('bw-live2d-model') || '0', 10);
         if (currentModel >= MODELS.length) currentModel = 0;
@@ -357,7 +357,7 @@ const navItems = [
         }
 
         var s = document.createElement('script');
-        s.src = 'https://unpkg.com/live2d-widget@3.0.4/lib/L2Dwidget.min.js';
+        s.src = 'https://cdn.jsdelivr.net/npm/live2d-widget@3.0.4/lib/L2Dwidget.min.js';
         s.onload = function() {
           function loadModel(idx) {
             currentModel = idx;
@@ -489,6 +489,24 @@ const navItems = [
           document.dispatchEvent(evt);
         }
       })();
+    </script>
+
+    <!-- KaTeX client-side render for AI text -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script is:inline>
+      window.__renderMathInEl = function(el) {
+        if (!el || typeof renderMathInElement === 'undefined') return;
+        try {
+          renderMathInElement(el, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+            ],
+            throwOnError: false,
+          });
+        } catch(e) {}
+      };
     </script>
 </body>
 </html>

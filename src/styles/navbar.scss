@@ -1,8 +1,7 @@
 /* =========================================
-   导航栏 — 指纹触发 + hover 展开
+   Navbar — Liquid Glass Pill
    ========================================= */
 
-/* —— Wrapper: 左上角固定定位 —— */
 .bw-navbar-wrapper {
     position: fixed;
     top: 20px;
@@ -10,15 +9,15 @@
     z-index: 1000;
 }
 
-/* —— 指纹触发器 —— */
+/* Fingerprint trigger */
 .bw-navbar-trigger {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--bw-surface) 80%, transparent);
-    backdrop-filter: blur(16px) saturate(1.5);
-    -webkit-backdrop-filter: blur(16px) saturate(1.5);
-    border: 1px solid color-mix(in srgb, var(--bw-border) 50%, transparent);
+    background: var(--bw-surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--bw-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,7 +44,7 @@
     transform: rotate(90deg) scale(0.85);
 }
 
-/* —— 展开后的导航栏 —— */
+/* Expanded navbar pill */
 .bw-navbar {
     position: absolute;
     top: 0;
@@ -55,10 +54,10 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 8px 0 12px;
-    background: color-mix(in srgb, var(--bw-surface) 80%, transparent);
-    backdrop-filter: blur(20px) saturate(1.8);
-    -webkit-backdrop-filter: blur(20px) saturate(1.8);
-    border: 1px solid color-mix(in srgb, var(--bw-border) 50%, transparent);
+    background: var(--bw-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--bw-border);
     border-radius: 999px;
     box-shadow: var(--shadow-l2), var(--shadow-glow);
     width: 0;
@@ -71,7 +70,6 @@
         left 0.5s var(--ease-out-expo);
 }
 
-/* hover wrapper 时展开导航栏，隐藏触发器 */
 .bw-navbar-wrapper:hover .bw-navbar {
     width: min(88vw, 680px);
     opacity: 1;
@@ -85,7 +83,7 @@
     pointer-events: none;
 }
 
-/* —— Logo —— */
+/* Logo */
 .bw-navbar__logo {
     display: flex;
     align-items: center;
@@ -103,20 +101,22 @@
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 2px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
+    border: 2px solid rgba(200, 164, 92, 0.25);
     transition: border-color var(--transition-base);
 }
 .bw-navbar__avatar img { width: 100%; height: 100%; object-fit: cover; }
 .bw-navbar:hover .bw-navbar__avatar { border-color: var(--accent-color); }
 
 .bw-navbar__title {
-    font-size: 13px;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 400;
     letter-spacing: 0.3px;
     white-space: nowrap;
 }
 
-/* —— 导航链接 —— */
+/* Nav links */
 .bw-navbar__nav {
     display: flex;
     align-items: center;
@@ -132,6 +132,7 @@
     transition: all 0.2s var(--ease-out-expo);
     text-decoration: none;
     white-space: nowrap;
+    font-family: var(--font-sans);
 }
 .bw-navbar__link:hover,
 .bw-navbar__link.is-active {
@@ -139,7 +140,7 @@
     background: var(--bw-accent-bg);
 }
 
-/* —— 右侧操作区 —— */
+/* Actions */
 .bw-navbar__actions {
     display: flex;
     align-items: center;
@@ -169,21 +170,19 @@
 .bw-navbar__btn:active { transform: scale(0.95); }
 .bw-navbar__btn svg { width: 16px; height: 16px; }
 
-/* —— 滚动后：导航栏常驻显示 —— */
+/* Scrolled state */
 .bw-navbar-wrapper.is-scrolled .bw-navbar {
     width: min(88vw, 680px);
     opacity: 1;
     pointer-events: auto;
     left: 0;
 }
-
 .bw-navbar-wrapper.is-scrolled .bw-navbar-trigger {
     opacity: 0;
     transform: scale(0.5);
     pointer-events: none;
 }
 
-/* —— 移动端 —— */
 @media (max-width: 768px) {
     .bw-navbar-wrapper { top: 12px; left: 12px; }
     .bw-navbar-wrapper:hover .bw-navbar,
@@ -194,5 +193,4 @@
     .bw-navbar__title { font-size: 12px; }
 }
 
-/* —— page-wrapper 顶部间距 —— */
 .page-wrapper { padding-top: calc(var(--navbar-height) + 8px); }

@@ -87,4 +87,13 @@ const mins = Math.max(1, Math.ceil(readingTime));
         </main>
     </div>
     <AIAssistant title={title} bodyExcerpt={bodyExcerpt || description || ''} />
+    <script is:inline>
+      (function() {
+        var el = document.querySelector('.post-ai-summary__text');
+        if (el && window.__renderMathInEl) {
+          if (window.katex) window.__renderMathInEl(el);
+          else document.addEventListener('DOMContentLoaded', function() { window.__renderMathInEl(el); });
+        }
+      })();
+    </script>
 </BaseLayout>

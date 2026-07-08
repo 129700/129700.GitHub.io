@@ -20,14 +20,97 @@ import momentsData from '../data/moments.json';
 const moments: Array<{date: string; text: string}> = momentsData || [];
 
 const catIcons: Record<string, string> = {
-    '项目': '🧪', '学习': '📚', '教程': '📖', '读书': '📕', '笔记': '📝',
-    '控制理论': '📐', '嵌入式': '⚙️',
+    '项目': '\u{1F9EA}', '学习': '\u{1F4DA}', '教程': '\u{1F4D6}', '读书': '\u{1F4D5}', '笔记': '\u{1F4DD}',
+    '控制理论': '\u{1F4D0}', '嵌入式': '\u2699\uFE0F',
 };
+
+const blogStart = new Date(2026, 0, 1);
+const blogDays = Math.max(1, Math.floor((Date.now() - blogStart.getTime()) / 86400000));
 ---
 
 <BaseLayout title="129700 的笔记站" pageClass="page-home" activeNav="home">
-    <div class="page-wrapper">
-        <!-- Left Sidebar -->
+    <!-- ============================================
+         Lumora Landing Hero
+         ============================================ -->
+    <section class="lumora-hero" id="lumora-hero">
+        <!-- Video backgrounds (auto-cycle) -->
+        <video class="lumora-hero__video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260702_081127_0992a171-d3c6-4978-8213-0ec5df8b6d63.mp4" autoplay muted loop playsinline></video>
+        <video class="lumora-hero__video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260702_092026_dd05b805-ea0f-40b2-8c52-332b88502592.mp4" autoplay muted loop playsinline></video>
+        <video class="lumora-hero__video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260702_081042_df7202bf-bd80-4b2b-bbc6-1f09ba2870e9.mp4" autoplay muted loop playsinline></video>
+        <video class="lumora-hero__video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260702_080959_4cac5234-3573-464e-a5b7-76b94b8a7d61.mp4" autoplay muted loop playsinline></video>
+        <!-- Video channel labels -->
+        <div class="lumora-hero__channels">
+            <span class="lumora-hero__channel" data-idx="0">CH1 · Golden Hour</span>
+            <span class="lumora-hero__channel" data-idx="1">CH2 · Still Water</span>
+            <span class="lumora-hero__channel" data-idx="2">CH3 · Deep Woods</span>
+            <span class="lumora-hero__channel" data-idx="3">CH4 · Quiet Dawn</span>
+        </div>
+        <!-- Grain overlay -->
+        <div class="lumora-hero__grain"></div>
+        <!-- PCB dot-grid (signature) -->
+        <div class="lumora-hero__grid"></div>
+        <!-- Vignette -->
+        <div class="lumora-hero__vignette"></div>
+
+        <div class="lumora-hero__content">
+            <!-- Tagline badge -->
+            <div class="lumora-hero__badge">
+                <span class="lumora-hero__badge-dot"></span>
+                <span>嵌入式开发 · 控制理论 · 学习笔记</span>
+                <span class="lumora-hero__badge-cursor">_</span>
+            </div>
+
+            <!-- Visitor greeting -->
+            <div class="lumora-hero__greeting">
+                <span id="lumora-greeting-text">正在感应来访者...</span>
+                <span class="lumora-hero__greeting-ip">你的 IP 是 <span id="lumora-greeting-ip-val">---.---.---.---</span></span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="lumora-hero__title">129700</h1>
+
+            <!-- Subtitle -->
+            <p class="lumora-hero__sub">
+                记录一些学习，一些生活。<br/>
+                控制理论、嵌入式开发的学习笔记。偶尔写点生活碎片，写给未来回头看的自己。
+            </p>
+
+            <!-- Stats -->
+            <div class="lumora-hero__stats">
+                <div class="lumora-hero__stat">
+                    <span class="lumora-hero__stat-num" id="lumora-stat-posts">{totalPosts}</span>
+                    <span class="lumora-hero__stat-label">篇文章</span>
+                </div>
+                <div class="lumora-hero__stat">
+                    <span class="lumora-hero__stat-num" id="lumora-stat-tags">{totalTags}</span>
+                    <span class="lumora-hero__stat-label">个标签</span>
+                </div>
+                <div class="lumora-hero__stat">
+                    <span class="lumora-hero__stat-num" id="lumora-stat-days">{blogDays}</span>
+                    <span class="lumora-hero__stat-label">天已过</span>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <a class="lumora-hero__cta" href="#lumora-blog">
+                进入博客
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </a>
+
+            <!-- Scroll hint -->
+            <div class="lumora-hero__scroll-hint">
+                <span>向下滚动</span>
+                <div class="lumora-hero__scroll-line"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         Blog Content (below the fold)
+         ============================================ -->
+    <div id="lumora-blog" class="page-wrapper">
         <aside class="page-sidebar-left">
             <div class="sidebar-left__section">
                 <div class="sidebar-left__title">分类</div>
@@ -35,7 +118,7 @@ const catIcons: Record<string, string> = {
                     {Array.from(categoryMap.entries()).map(([cat, count]) => (
                         <li>
                             <a class="sidebar-left__cat" href={`/categories/${cat}`}>
-                                <span>{catIcons[cat] || '📂'} {cat}</span>
+                                <span>{catIcons[cat] || '\u{1F4C2}'} {cat}</span>
                                 <span class="sidebar-left__cat-count">{count}</span>
                             </a>
                         </li>
@@ -52,37 +135,7 @@ const catIcons: Record<string, string> = {
             </div>
         </aside>
 
-        <!-- Main Content -->
         <div class="page-content-area">
-            <!-- Hero -->
-            <section class="bw-hero bw-reveal">
-                <div class="bw-greeting" id="bw-greeting">
-                    <span class="bw-greeting__dot"></span>
-                    <div class="bw-greeting__content">
-                        <span class="bw-greeting__text">正在获取来访者信息...</span>
-                        <span class="bw-greeting__ip-line">你的 IP 是 <span class="bw-greeting__ip-val" id="bw-greeting-ip">加载中...</span></span>
-                    </div>
-                </div>
-                <h1 class="bw-hero__title">记录一些学习，一些生活。</h1>
-                <p class="bw-hero__sub">控制理论、嵌入式开发的学习笔记。偶尔写点生活碎片，写给未来回头看的自己。</p>
-                <div class="bw-hero__stats">
-                    <div class="bw-stat">
-                        <span class="bw-stat__num" id="bw-stat-posts">{totalPosts}</span>
-                        <span class="bw-stat__label">文章</span>
-                    </div>
-                    <div class="bw-stat">
-                        <span class="bw-stat__num" id="bw-stat-tags">{totalTags}</span>
-                        <span class="bw-stat__label">标签</span>
-                    </div>
-                    <div class="bw-stat">
-                        <span class="bw-stat__num" id="bw-stat-days">0</span>
-                        <span class="bw-stat__label">天</span>
-                    </div>
-                </div>
-            </section>
-
-
-
             {categoryMap.size > 0 && (
                 <section class="bw-reveal">
                     <div class="bw-section-head"><span class="bw-section-title">精选分类</span></div>
@@ -92,7 +145,7 @@ const catIcons: Record<string, string> = {
                             return (
                                 <div class="bw-cat">
                                     <div class="bw-cat__header">
-                                        <span class="bw-cat__icon">{catIcons[cat] || '📂'}</span>
+                                        <span class="bw-cat__icon">{catIcons[cat] || '\u{1F4C2}'}</span>
                                         <div>
                                             <div class="bw-cat__name">{cat}</div>
                                             <div class="bw-cat__count">{count} 篇文章</div>
@@ -106,7 +159,7 @@ const catIcons: Record<string, string> = {
                                             </a>
                                         ))}
                                     </div>
-                                    <a class="bw-cat__more" href={`/categories/${cat}`}>查看全部 →</a>
+                                    <a class="bw-cat__more" href={`/categories/${cat}`}>查看全部 &rarr;</a>
                                 </div>
                             );
                         })}
@@ -162,12 +215,11 @@ const catIcons: Record<string, string> = {
                     <a class="bw-friend-link" href="https://blog.liushen.fun/" target="_blank" rel="noopener">清羽飞扬</a>
                     <a class="bw-friend-link" href="https://www.robomaster.com/" target="_blank" rel="noopener">RoboMaster</a>
                     <a class="bw-friend-link" href="https://haki-haki-haki.github.io/myblog_new/?p=index" target="_blank" rel="noopener">Haki Blog</a>
-                    <a class="bw-friend-link" href="/links">更多友链 →</a>
+                    <a class="bw-friend-link" href="/links">更多友链 &rarr;</a>
                 </div>
             </section>
         </div>
 
-        <!-- Right Sidebar -->
         <aside class="page-sidebar-right">
             <div class="sidebar-right__section">
                 <div class="sidebar-right__title">网站信息</div>
@@ -183,7 +235,7 @@ const catIcons: Record<string, string> = {
         </aside>
     </div>
 
-    <!-- Live2D 看板娘 -->
+    <!-- Live2D -->
     <div class="bw-pet" id="bw-pet">
         <div class="bw-pet__bubble" id="bw-pet-bubble">
             <span class="bw-pet__bubble-text" id="bw-pet-text">正在感应来访者...</span>
@@ -193,6 +245,41 @@ const catIcons: Record<string, string> = {
 
     <script is:inline>
         (function() {
+            // === Landing page animations ===
+            var hero = document.getElementById('lumora-hero');
+            if (hero) {
+                requestAnimationFrame(function() {
+                    hero.classList.add('is-loaded');
+                });
+            }
+
+            // === Video auto-cycle ===
+            var videos = document.querySelectorAll('.lumora-hero__video');
+            var channels = document.querySelectorAll('.lumora-hero__channel');
+            var videoIdx = 0;
+            if (videos.length > 0) {
+                videos[0].classList.add('is-active');
+                if (channels[0]) channels[0].classList.add('is-active');
+                setInterval(function() {
+                    videos[videoIdx].classList.remove('is-active');
+                    if (channels[videoIdx]) channels[videoIdx].classList.remove('is-active');
+                    videoIdx = (videoIdx + 1) % videos.length;
+                    videos[videoIdx].classList.add('is-active');
+                    if (channels[videoIdx]) channels[videoIdx].classList.add('is-active');
+                }, 8000);
+            }
+
+            // Smooth scroll for CTA
+            var cta = document.querySelector('.lumora-hero__cta');
+            if (cta) {
+                cta.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var target = document.getElementById('lumora-blog');
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
+            // === Greeting / IP logic ===
             var bloggerLat = 34.26, bloggerLng = 108.94;
             var TENCENT_KEY = 'C3EBZ-CFS37-HVBX3-HJFP2-CDOSS-PDFI5';
             var WORKER_URL = document.body.dataset.workerUrl || '';
@@ -202,73 +289,46 @@ const catIcons: Record<string, string> = {
 
             var hour = new Date().getHours();
             var timeGreet, timeEmoji;
-            if (hour < 6) { timeGreet = '夜深了'; timeEmoji = '🌙'; }
-            else if (hour < 9) { timeGreet = '早上好'; timeEmoji = '🌅'; }
-            else if (hour < 12) { timeGreet = '上午好'; timeEmoji = '☀️'; }
-            else if (hour < 14) { timeGreet = '中午好'; timeEmoji = '🌞'; }
-            else if (hour < 18) { timeGreet = '下午好'; timeEmoji = '🕞'; }
-            else if (hour < 22) { timeGreet = '晚上好'; timeEmoji = '🌆'; }
-            else { timeGreet = '夜深了'; timeEmoji = '🌙'; }
-
-            function calcDist(lat1, lng1, lat2, lng2) {
-                var R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
-                var a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-                return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-            }
+            if (hour < 6) { timeGreet = '夜深了'; timeEmoji = '\u{1F319}'; }
+            else if (hour < 9) { timeGreet = '早上好'; timeEmoji = '\u{1F305}'; }
+            else if (hour < 12) { timeGreet = '上午好'; timeEmoji = '\u2600\uFE0F'; }
+            else if (hour < 14) { timeGreet = '中午好'; timeEmoji = '\u{1F31E}'; }
+            else if (hour < 18) { timeGreet = '下午好'; timeEmoji = '\u{1F55E}'; }
+            else if (hour < 22) { timeGreet = '晚上好'; timeEmoji = '\u{1F306}'; }
+            else { timeGreet = '夜深了'; timeEmoji = '\u{1F319}'; }
 
             function showBubble(msg) {
-                if (petText) petText.textContent = msg;
+                if (petText) { petText.innerHTML = msg; window.__renderMathInEl(petText); }
                 if (petBubble) petBubble.classList.add('is-visible');
             }
+            function fallback() { showBubble(timeEmoji + ' ' + timeGreet + '\uFF01'); }
 
-            function fallback() { showBubble(timeEmoji + ' ' + timeGreet + '！'); }
-
-            function updateGreeting(loc, dist, ip) {
-                var greetEl = document.getElementById('bw-greeting');
-                if (!greetEl) return;
-                var textEl = greetEl.querySelector('.bw-greeting__text');
-                var ipEl = document.getElementById('bw-greeting-ip');
-                if (textEl) {
-                    var distStr = dist ? '，距我约' + dist + 'km' : '';
-                    textEl.innerHTML = '来自<strong>' + loc + '</strong>的盆友' + distStr + ' · ' + timeEmoji + ' ' + timeGreet;
-                }
-                if (ipEl && ip) { ipEl.textContent = ip; }
-            }
-
-            // 名人名言库
             var quotes = [
-                '路漫漫其修远兮，吾将上下而求索。 — 屈原',
-                '学而不思则罔，思而不学则殆。 — 孔子',
-                '千里之行，始于足下。 — 老子',
-                '不积跬步，无以至千里。 — 荀子',
-                '业精于勤，荒于嬉。 — 韩愈',
-                '天行健，君子以自强不息。 — 《周易》',
-                '纸上得来终觉浅，绝知此事要躬行。 — 陆游',
-                '博观而约取，厚积而薄发。 — 苏轼',
-                '宝剑锋从磨砺出，梅花香自苦寒来。 — 古训',
-                '生活不是等待暴风雨过去，而是学会在雨中翩翩起舞。',
-                '保持饥饿，保持愚蠢。 — 乔布斯',
-                '代码是写给人看的，只是恰好能被机器执行。 — Harold Abelson',
-                '简单是可靠的先决条件。 — Edsger Dijkstra',
-                '过早优化是万恶之源。 — Donald Knuth',
-                '任何足够先进的技术，都与魔法无异。 — Arthur C. Clarke',
-                '最好的代码是没有代码。 — Jeff Atwood',
-                '调试比编写代码难两倍，如果你把代码写得尽可能聪明，你就没有能力去调试它。',
-                '先让它能工作，再让它更好，最后让它更快。 — Kent Beck',
+                '路漫漫其修远兮，吾将上下而求索。 \u2014 屈原',
+                '学而不思则罔，思而不学则殆。 \u2014 孔子',
+                '千里之行，始于足下。 \u2014 老子',
+                '不积跬步，无以至千里。 \u2014 荀子',
+                '业精于勤，荒于嬉。 \u2014 韩愈',
+                '天行健，君子以自强不息。 \u2014 《周易》',
+                '纸上得来终觉浅，绝知此事要躬行。 \u2014 陆游',
+                '博观而约取，厚积而薄发。 \u2014 苏轼',
+                '宝剑锋从磨砺出，梅花香自苦寒来。 \u2014 古训',
+                '代码是写给人看的，只是恰好能被机器执行。 \u2014 Harold Abelson',
+                '简单是可靠的先决条件。 \u2014 Edsger Dijkstra',
+                '过早优化是万恶之源。 \u2014 Donald Knuth',
+                '任何足够先进的技术，都与魔法无异。 \u2014 Arthur C. Clarke',
+                '调试比编写代码难两倍。',
             ];
 
             var chatTopics = [
                 '今日AI领域有什么有趣的新进展？用一句话总结，卖萌语气，30字以内。',
                 '最近有什么好玩的科技新闻？用一句话告诉喵，卖萌语气，30字以内。',
                 '给来访者推荐一个编程小技巧吧，卖萌语气，30字以内。',
-                '今天有什么值得开心的事？用卖萌语气说一句，25字以内。',
-                '用一句话鼓励正在学习编程的访客，卖萌语气，25字以内。',
                 '分享一个关于AI的冷知识，卖萌语气，30字以内。',
                 '推荐一本技术书籍，卖萌语气，25字以内。',
-                '今天适合做什么？给个可爱建议，25字以内。',
             ];
 
-            var isInitialGreet = true;
+            var isInitialGreet = true, chatCounter = 0;
 
             function askAI(loc, dist, extra) {
                 var prompt = '你是一只可爱的小黑猫管家。一位来自' + loc + '的访客正在访问博客' + (dist ? '，距西安约' + dist + '公里' : '') + '。现在是' + timeGreet + '。' + (extra || '') + '请用一句话欢迎这位访客，要包含当地特色（美食/文化/风景），语气可爱卖萌，25字以内，末尾加一个emoji。只输出这句话，不要其他内容。';
@@ -278,23 +338,18 @@ const catIcons: Record<string, string> = {
                     body: JSON.stringify({ prompt: prompt, max_tokens: 60, temperature: 0.95 })
                 }).then(function(r) { return r.json(); })
                   .then(function(data) {
-                      if (data.answer) {
-                          showBubble(data.answer);
-                      } else { showBubble(timeEmoji + ' ' + timeGreet + '！'); }
-                  }).catch(function() { showBubble(timeEmoji + ' ' + timeGreet + '！'); });
+                      if (data.answer) showBubble(data.answer);
+                      else showBubble(timeEmoji + ' ' + timeGreet + '\uFF01');
+                  }).catch(function() { showBubble(timeEmoji + ' ' + timeGreet + '\uFF01'); });
             }
 
-            // 定时/点击推送：名人名言 或 AI热点，交替
-            var chatCounter = 0;
             function pushRandomChat() {
                 isInitialGreet = false;
                 chatCounter++;
                 if (chatCounter % 2 === 1) {
-                    // 名人名言
                     var q = quotes[Math.floor(Math.random() * quotes.length)];
-                    showBubble('📖 ' + q);
+                    showBubble('\u{1F4D6} ' + q);
                 } else {
-                    // AI 生成热点/闲聊
                     var topic = chatTopics[Math.floor(Math.random() * chatTopics.length)];
                     fetch(WORKER_URL + '/api/chat', {
                         method: 'POST',
@@ -302,37 +357,37 @@ const catIcons: Record<string, string> = {
                         body: JSON.stringify({ prompt: '你是一只可爱的小黑猫管家，住在技术博客里。' + topic + '末尾加一个emoji。只输出这句话。', max_tokens: 60, temperature: 0.95 })
                     }).then(function(r) { return r.json(); })
                       .then(function(data) {
-                          if (data.answer) {
-                              showBubble(data.answer);
-                          } else {
-                              showBubble('📖 ' + quotes[Math.floor(Math.random() * quotes.length)]);
-                          }
+                          if (data.answer) showBubble(data.answer);
+                          else showBubble('\u{1F4D6} ' + quotes[Math.floor(Math.random() * quotes.length)]);
                       }).catch(function() {
-                          showBubble('📖 ' + quotes[Math.floor(Math.random() * quotes.length)]);
+                          showBubble('\u{1F4D6} ' + quotes[Math.floor(Math.random() * quotes.length)]);
                       });
                 }
             }
 
-            // 腾讯位置服务 → AI 问候（JSONP，稳定可用）
-            var visitorIP = '';
+            function updateGreetingText(loc, ip) {
+                var el = document.getElementById('lumora-greeting-text');
+                if (el) el.textContent = '来自 ' + loc + ' 的访客 · ' + timeEmoji + ' ' + timeGreet;
+                var ipEl = document.getElementById('lumora-greeting-ip-val');
+                if (ipEl && ip) ipEl.textContent = ip;
+            }
+
             window.qqLocationCallback = function(res) {
                 if (res && res.status === 0 && res.result && res.result.ad_info) {
                     var info = res.result.ad_info;
                     var loc = (info.province || '') + (info.city && info.city !== info.province ? info.city : '');
                     if (!loc) { tryPconline(); return; }
-                    var dist = '';
-                    if (info.lat && info.lng) { dist = calcDist(bloggerLat, bloggerLng, info.lat, info.lng) + ''; }
-                    if (res.result.ip) visitorIP = res.result.ip;
-                    updateGreeting(loc, dist, visitorIP);
-                    askAI(loc, dist, '');
+                    var ip = res.result.ip || '';
+                    updateGreetingText(loc, ip);
+                    askAI(loc, '', '');
                 } else { tryPconline(); }
             };
 
             window.IPCallBack = function(d) {
                 if (d && (d.pro || d.city)) {
                     var loc = (d.pro || '') + (d.city && d.city !== d.pro ? d.city : '');
-                    if (d.cip) visitorIP = d.cip;
-                    if (loc) { updateGreeting(loc, '', visitorIP); askAI(loc, '', ''); return; }
+                    var ip = d.cip || '';
+                    if (loc) { updateGreetingText(loc, ip); askAI(loc, '', ''); return; }
                 }
                 fallback();
             };
@@ -349,18 +404,13 @@ const catIcons: Record<string, string> = {
             s.onerror = tryPconline;
             document.head.appendChild(s);
 
-            // 看板娘点击 → 推送名言/AI热点
-            // 监听 Live2D 就绪事件 + 直接绑定
             function bindPetClick() {
                 var widget = document.getElementById('live2d-widget');
                 if (!widget) return false;
                 widget.addEventListener('click', function(e) {
-                    // 排除工具栏按钮
                     if (e.target.closest('#bw-live2d-toolbar')) return;
                     if (isInitialGreet) {
-                        var locEl = document.querySelector('.bw-greeting__text');
-                        var loc = locEl ? locEl.textContent.replace('来自', '').split('的')[0] || '' : '';
-                        askAI(loc || '远方', '', '换个方式再卖个萌');
+                        askAI('远方', '', '换个方式再卖个萌');
                         isInitialGreet = false;
                     } else {
                         pushRandomChat();
@@ -368,18 +418,16 @@ const catIcons: Record<string, string> = {
                 });
                 return true;
             }
-            // 尝试立即绑定，否则等就绪事件
             if (!bindPetClick()) {
                 document.addEventListener('bw-live2d-ready', bindPetClick);
             }
 
-            // 定时推送：每90秒推送一条（30秒后强制启动，防止死锁）
             setTimeout(function() { isInitialGreet = false; }, 30000);
             setInterval(function() {
                 if (!isInitialGreet) pushRandomChat();
             }, 90000);
 
-            // === 数字动画 ===
+            // === Count-up animation ===
             function animateNum(el, target, dur) {
                 if (!el) return;
                 var t0 = performance.now();
@@ -392,14 +440,347 @@ const catIcons: Record<string, string> = {
                 }
                 requestAnimationFrame(step);
             }
-            var blogStart = new Date(2026, 0, 1);
-            var blogDays = Math.max(1, Math.floor((new Date() - blogStart) / 86400000));
-            var postsEl = document.getElementById('bw-stat-posts');
-            var tagsEl = document.getElementById('bw-stat-tags');
-            var daysEl = document.getElementById('bw-stat-days');
-            if (postsEl) { var v = parseInt(postsEl.textContent) || 0; postsEl.textContent = '0'; animateNum(postsEl, v, 1800); }
-            if (tagsEl) { var v = parseInt(tagsEl.textContent) || 0; tagsEl.textContent = '0'; animateNum(tagsEl, v, 1800); }
-            if (daysEl) { daysEl.textContent = '0'; animateNum(daysEl, blogDays, 1800); }
+            var postsEl = document.getElementById('lumora-stat-posts');
+            var tagsEl = document.getElementById('lumora-stat-tags');
+            var daysEl = document.getElementById('lumora-stat-days');
+            if (postsEl) { var v = parseInt(postsEl.textContent) || 0; postsEl.textContent = '0'; animateNum(postsEl, v, 2000); }
+            if (tagsEl) { var v = parseInt(tagsEl.textContent) || 0; tagsEl.textContent = '0'; animateNum(tagsEl, v, 2000); }
+            if (daysEl) { var v = parseInt(daysEl.textContent) || 0; daysEl.textContent = '0'; animateNum(daysEl, v, 2000); }
         })();
     </script>
 </BaseLayout>
+
+<style>
+/* =========================================
+   Lumora Landing Hero — Tech/Editorial
+   ========================================= */
+.lumora-hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0D0B09;
+    overflow: hidden;
+}
+
+/* Video layers */
+.lumora-hero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+}
+.lumora-hero__video.is-active { opacity: 1; }
+
+/* Channel labels (oscilloscope-style) */
+.lumora-hero__channels {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 16px;
+}
+.lumora-hero__channel {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.5px;
+    transition: color 0.8s ease;
+}
+.lumora-hero__channel.is-active {
+    color: rgba(200,164,92,0.7);
+}
+
+/* Grain */
+.lumora-hero__grain {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* PCB dot-grid (signature element) */
+.lumora-hero__grid {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: radial-gradient(circle, rgba(200,164,92,0.5) 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+}
+
+/* Vignette */
+.lumora-hero__vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 25%, rgba(13,11,9,0.5) 70%, rgba(13,11,9,0.85) 100%);
+}
+
+/* Content */
+.lumora-hero__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    max-width: 660px;
+}
+
+/* Badge — terminal style */
+.lumora-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(200,164,92,0.15);
+    font-size: 0.78rem;
+    color: #8A8278;
+    margin-bottom: 2rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.3px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    transition-delay: 100ms;
+}
+.lumora-hero__badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #C8A45C;
+    box-shadow: 0 0 6px rgba(200,164,92,0.5);
+    animation: dotPulse 2s ease-in-out infinite;
+}
+.lumora-hero__badge-cursor {
+    color: #C8A45C;
+    font-weight: 700;
+    animation: blink 1s step-end infinite;
+}
+.lumora-hero__badge-sep {
+    color: rgba(200,164,92,0.3);
+}
+
+/* Visitor greeting */
+.lumora-hero__greeting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 18px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(200,164,92,0.12);
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: #8A8278;
+    margin-bottom: 1.75rem;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    transition-delay: 150ms;
+}
+
+.lumora-hero__greeting-ip {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: #5C554C;
+}
+.lumora-hero__greeting-ip span {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+    cursor: default;
+}
+.lumora-hero__greeting:hover .lumora-hero__greeting-ip span {
+    filter: blur(0);
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.6); }
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Title */
+.lumora-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 10vw, 7.5rem);
+    font-weight: 400;
+    font-style: italic;
+    color: #F5F0E8;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+    transition-delay: 250ms;
+}
+
+/* Subtitle */
+.lumora-hero__sub {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: #8A8278;
+    line-height: 1.75;
+    max-width: 420px;
+    margin: 0 auto 2.5rem;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    transition-delay: 400ms;
+}
+
+/* Stats — instrument panel */
+.lumora-hero__stats {
+    display: flex;
+    justify-content: center;
+    gap: 1px;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    transition-delay: 550ms;
+}
+
+.lumora-hero__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 1.75rem;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(200,164,92,0.08);
+    min-width: 110px;
+}
+.lumora-hero__stat:first-child { border-radius: 12px 0 0 12px; }
+.lumora-hero__stat:last-child { border-radius: 0 12px 12px 0; }
+
+.lumora-hero__stat-num {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    color: #C8A45C;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+}
+
+.lumora-hero__stat-label {
+    font-size: 0.7rem;
+    color: #5C554C;
+    margin-top: 2px;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* CTA */
+.lumora-hero__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 32px;
+    border-radius: 4px;
+    background: #C8A45C;
+    color: #0D0B09;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    line-height: 1;
+    letter-spacing: 0.3px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo), box-shadow 0.3s ease;
+    transition-delay: 700ms;
+}
+
+.lumora-hero__cta svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.lumora-hero__cta:hover {
+    box-shadow: 0 0 32px rgba(200,164,92,0.35);
+    color: #0D0B09;
+}
+
+/* Scroll hint */
+.lumora-hero__scroll-hint {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-out-expo);
+    transition-delay: 1000ms;
+}
+
+.lumora-hero__scroll-hint span {
+    font-size: 0.68rem;
+    color: #5C554C;
+    font-family: var(--font-mono);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.lumora-hero__scroll-line {
+    width: 1px;
+    height: 28px;
+    background: linear-gradient(to bottom, rgba(200,164,92,0.4), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+    0%, 100% { opacity: 0.2; transform: scaleY(1); }
+    50% { opacity: 0.8; transform: scaleY(1.3); }
+}
+
+/* Loaded state */
+.lumora-hero.is-loaded .lumora-hero__badge,
+.lumora-hero.is-loaded .lumora-hero__greeting,
+.lumora-hero.is-loaded .lumora-hero__title,
+.lumora-hero.is-loaded .lumora-hero__sub,
+.lumora-hero.is-loaded .lumora-hero__stats,
+.lumora-hero.is-loaded .lumora-hero__cta,
+.lumora-hero.is-loaded .lumora-hero__scroll-hint {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .lumora-hero__content { padding: 1.5rem; }
+    .lumora-hero__title { font-size: clamp(2.5rem, 8vw, 4rem); }
+    .lumora-hero__stats { gap: 1px; }
+    .lumora-hero__stat { padding: 0.5rem 1rem; min-width: 80px; }
+    .lumora-hero__stat-num { font-size: 1.2rem; }
+    .lumora-hero__channels { gap: 10px; bottom: 16px; }
+    .lumora-hero__scroll-hint { bottom: 52px; }
+}
+</style>

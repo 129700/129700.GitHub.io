@@ -6,7 +6,7 @@ interface Props {
 
 const { title, bodyExcerpt = '' } = Astro.props;
 
-const contextText = bodyExcerpt.slice(0, 800).replace(/`/g, '\\`');
+const contextText = bodyExcerpt.slice(0, 800).replace(/`/g, '\\\\`');
 ---
 
 <div class="bw-ai-assistant" id="bw-ai-assistant" data-title={title} data-context={contextText}>
@@ -61,11 +61,60 @@ const contextText = bodyExcerpt.slice(0, 800).replace(/`/g, '\\`');
     var isOpen = false;
     var isLoading = false;
 
+    // ── Heading index ──
+    var headingMap = null;
+
+    function buildHeadingMap() {
+        if (headingMap) return headingMap;
+        headingMap = {};
+        var article = document.querySelector('.post-content');
+        if (!article) return headingMap;
+        var headings = article.querySelectorAll('h2, h3');
+        headings.forEach(function(h) {
+            var text = (h.textContent || '').replace(/\s+/g, '').trim();
+            headingMap[text] = h;
+            var simple = text.replace(/[、，,.·：:！!？?\-\s]/g, '');
+            if (simple !== text) headingMap[simple] = h;
+        });
+        return headingMap;
+    }
+
+    function findHeading(sectionName) {
+        var map = buildHeadingMap();
+        var key = sectionName.replace(/\s+/g, '').trim();
+        if (map[key]) return map[key];
+        var simple = key.replace(/[、，,.·：:！!？?\-\s]/g, '');
+        if (map[simple]) return map[simple];
+        for (var k in map) {
+            if (k.indexOf(key) !== -1 || key.indexOf(k) !== -1) return map[k];
+        }
+        return null;
+    }
+
+    function scrollToSection(heading) {
+        var prev = document.querySelectorAll('.bw-section-highlight');
+        prev.forEach(function(el) { el.classList.remove('bw-section-highlight'); });
+        heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        heading.classList.add('bw-section-highlight');
+        setTimeout(function() { heading.classList.remove('bw-section-highlight'); }, 2200);
+    }
+
+    // ── Parse AI response ──
+    function parseSections(text) {
+        var sections = [];
+        var re = /\[(?:SECTION|相关):\s*([^\]]+)\]/gi;
+        var m;
+        while ((m = re.exec(text)) !== null) sections.push(m[1].trim());
+        var cleanText = text.replace(re, '').replace(/\n{3,}/g, '\n\n').trim();
+        return { sections: sections, cleanText: cleanText };
+    }
+
     function openPanel() {
         isOpen = true;
         panel.classList.add('is-open');
         toggle.classList.add('is-active');
         setTimeout(function() { input.focus(); }, 300);
+        buildHeadingMap();
     }
 
     function closePanel() {
@@ -75,16 +124,78 @@ const contextText = bodyExcerpt.slice(0, 800).replace(/`/g, '\\`');
     }
 
     toggle.addEventListener('click', function() {
-        if (isOpen) closePanel();
-        else openPanel();
+        isOpen ? closePanel() : openPanel();
     });
 
-    function addMessage(role, text) {
+    function escapeHTML(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // ── Lazy-load katex ──
+    var katexReady = null;
+    function ensureKatex() {
+        if (katexReady) return katexReady;
+        katexReady = import('katex').then(function(m) { return m.default || m; });
+        return katexReady;
+    }
+
+    // ── Render $...$ and $$...$$ in a bubble (no lookbehind, robust) ──
+    async function renderMathInBubble(bubbleEl) {
+        var katex = await ensureKatex();
+        if (!katex) return;
+        try {
+            var html = bubbleEl.innerHTML;
+            // Pass 1: $$...$$ → display math
+            html = html.replace(/\$\$([^$]+)\$\$/g, function(_, formula) {
+                try {
+                    return katex.renderToString(formula.trim(), { displayMode: true, throwOnError: false });
+                } catch(e) { return _; }
+            });
+            // Pass 2: remaining $...$ → inline math (all $$ already consumed)
+            html = html.replace(/\$([^$]+)\$/g, function(_, formula) {
+                try {
+                    return katex.renderToString(formula.trim(), { displayMode: false, throwOnError: false });
+                } catch(e) { return _; }
+            });
+            bubbleEl.innerHTML = html;
+        } catch(e) {
+            console.error('KaTeX render failed:', e);
+        }
+    }
+
+    function addMessage(role, text, sections) {
         var div = document.createElement('div');
         div.className = 'bw-ai-assistant__msg bw-ai-assistant__msg--' + role;
         var avatar = role === 'ai' ? '🤖' : '👤';
-        div.innerHTML = '<div class="bw-ai-assistant__avatar">' + avatar + '</div><div class="bw-ai-assistant__bubble">' + escapeHTML(text) + '</div>';
+        var html = '<div class="bw-ai-assistant__avatar">' + avatar + '</div>';
+        html += '<div class="bw-ai-assistant__bubble">' + escapeHTML(text) + '</div>';
+
+        if (sections && sections.length > 0) {
+            var chipsHtml = '<div class="bw-ai-chips">';
+            sections.forEach(function(sec, i) {
+                var h = findHeading(sec);
+                if (h) chipsHtml += '<button class="bw-ai-chip" data-section-idx="' + i + '">📍 ' + escapeHTML(sec) + '</button>';
+            });
+            chipsHtml += '</div>';
+            html += chipsHtml;
+        }
+
+        div.innerHTML = html;
         messages.appendChild(div);
+
+        var bubble = div.querySelector('.bw-ai-assistant__bubble');
+        if (bubble && role === 'ai') renderMathInBubble(bubble);
+
+        if (sections && sections.length > 0) {
+            var chips = div.querySelectorAll('.bw-ai-chip');
+            chips.forEach(function(chip, i) {
+                chip.addEventListener('click', function() {
+                    var heading = findHeading(sections[i]);
+                    if (heading) scrollToSection(heading);
+                });
+            });
+        }
+
         messages.scrollTop = messages.scrollHeight;
     }
 
@@ -97,10 +208,6 @@ const contextText = bodyExcerpt.slice(0, 800).replace(/`/g, '\\`');
         return div;
     }
 
-    function escapeHTML(s) {
-        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
     async function askAI(question) {
         if (isLoading) return;
         isLoading = true;
@@ -111,18 +218,22 @@ const contextText = bodyExcerpt.slice(0, 800).replace(/`/g, '\\`');
 
         var prompt = '你是一个技术博客的AI助手。当前文章标题：《' + ARTICLE_TITLE + '》。';
         if (ARTICLE_CTX) prompt += '文章摘要：' + ARTICLE_CTX + '。';
-        prompt += '请根据文章内容回答访客的问题。如果问题与文章无关，也可以简短闲聊。回答尽量简洁，100字以内。访客问：' + question;
+        prompt += '请根据文章内容回答访客的问题。如果问题与文章无关，也可以简短闲聊。回答尽量简洁，150字以内。';
+        prompt += '如果文章中有相关公式，可以在回答中使用 LaTeX 格式（$...$ 行内，$$...$$ 独立行）。';
+        prompt += '在回答末尾，用独立行列出文章中可以找到的内容相关段落标题（最多3个），格式为：[SECTION: 段落标题]。段落标题请尽量与文章原文一致。如果确实没有相关内容，不要编造。';
+        prompt += '访客问：' + question;
 
         try {
             var res = await fetch(WORKER_URL + '/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: prompt, max_tokens: 200, temperature: 0.7 })
+                body: JSON.stringify({ prompt: prompt, max_tokens: 400, temperature: 0.7 })
             });
             var data = await res.json();
-            var answer = data.answer || '唔...暂时没有想好怎么回答，换个问题试试？';
+            var rawAnswer = data.answer || '唔...暂时没有想好怎么回答，换个问题试试？';
+            var parsed = parseSections(rawAnswer);
             loader.remove();
-            addMessage('ai', answer);
+            addMessage('ai', parsed.cleanText, parsed.sections);
         } catch (e) {
             loader.remove();
             addMessage('ai', '网络出了点问题，请稍后再试 ~');
